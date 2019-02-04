@@ -1,6 +1,7 @@
 package actors;
 
 import flixel.FlxSprite;
+import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
