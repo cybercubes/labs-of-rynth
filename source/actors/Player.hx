@@ -9,7 +9,8 @@ import item.BaseItem;
 
 class Player extends FlxSprite {
 	public var speed:Float = 100;
-	public var inv:List<BaseItem>;
+	public var invActiveItems:List<BaseItem>;
+	public var invPassiveItems:List<BaseItem>;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
@@ -26,7 +27,8 @@ class Player extends FlxSprite {
 		setSize(8, 14);
 		offset.set(4, 2);
 
-		inv = new List<BaseItem>();
+		invActiveItems = new List<BaseItem>();
+		invPassiveItems = new List<BaseItem>();
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -91,27 +93,42 @@ class Player extends FlxSprite {
 	}
 
 	function activeItemUsing():Void {
+
+		// using an active item
 		if (FlxG.keys.justPressed.SPACE) {
-			if (inv.length > 0) {
-				var activeItemsList = Lambda.filter(inv, function(v) {
-					return (v.isActive);
-				});
-				if (activeItemsList.length > 0) {
-					ConsoleUtil.log("The active item had been used!");
-					inv.remove(activeItemsList.last());
-				} else {
-					ConsoleUtil.log("No active items to use!");
-				}
+			if (invActiveItems.length > 0) {
+				ConsoleUtil.log("The active item had been used!");
+				invActiveItems.remove(invActiveItems.last());
 			} else {
-				ConsoleUtil.log("You don't have any items in the inv!");
+				ConsoleUtil.log("No active items to use!");
 			}
+		}
+
+		// displaying items in a log
+		if (FlxG.keys.justPressed.I) {
+			var activeItemsLog:String = "Active Items: ";
+			for (item in invActiveItems) {
+				activeItemsLog += item.name + ";";
+			}
+
+			var passiveItemsLog:String = "Passive Items: ";
+			for (item in invPassiveItems) {
+				passiveItemsLog += item.name + ";";
+			}
+
+			ConsoleUtil.log(activeItemsLog);
+			ConsoleUtil.log(passiveItemsLog);
 		}
 	}
 
 	public function pickUpAnItem(P:Player, I:BaseItem):Void {
 		if (P.alive && P.exists && I.alive && I.exists) {
 			if (FlxG.keys.pressed.E) {
-				P.inv.add(I);
+				if (I.isActive) {
+					P.invActiveItems.add(I);
+				} else {
+					P.invPassiveItems.add(I);
+				}
 				I.kill();
 			}
 		}
