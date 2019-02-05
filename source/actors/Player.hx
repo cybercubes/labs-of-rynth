@@ -4,8 +4,8 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
-import item.BaseItem;
 import flixel.system.debug.console.ConsoleUtil;
+import item.BaseItem;
 
 class Player extends FlxSprite {
 	public var speed:Float = 100;
@@ -93,12 +93,18 @@ class Player extends FlxSprite {
 	function activeItemUsing():Void {
 		if (FlxG.keys.justPressed.SPACE) {
 			if (inv.length > 0) {
-				ConsoleUtil.log("The active item had been used!");
-				inv.remove(inv.last());
+				var activeItemsList = Lambda.filter(inv, function(v) {
+					return (v.isActive);
+				});
+				if (activeItemsList.length > 0) {
+					ConsoleUtil.log("The active item had been used!");
+					inv.remove(activeItemsList.last());
+				} else {
+					ConsoleUtil.log("No active items to use!");
+				}
 			} else {
-				ConsoleUtil.log("No items to use!");
+				ConsoleUtil.log("You don't have any items in the inv!");
 			}
 		}
 	}
 }
-

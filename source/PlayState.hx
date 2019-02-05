@@ -9,7 +9,7 @@ import flixel.group.FlxGroup;
 import actors.Player;
 import item.BaseItem;
 import item.PassiveItem;
-import item.ActiveItem;
+import item.active.ConsumableItem;
 
 class PlayState extends FlxState {
 	var _map:FlxOgmoLoader;
@@ -51,10 +51,12 @@ class PlayState extends FlxState {
 			_player.x = x;
 			_player.y = y;
 		} else if (entityName == "item") {
-			if (Std.parseInt(entityData.get("etype")) == 0) {
-				_grpItems.add(new PassiveItem(x, y));
-			} else {
-				_grpItems.add(new ActiveItem(x, y));
+			var name:String = entityData.get("name");
+			switch (name) {
+				case "apple":
+					_grpItems.add(new ConsumableItem(x, y, name));
+				case "diamond":
+					_grpItems.add(new PassiveItem(x, y, name));
 			}
 		}
 	}
