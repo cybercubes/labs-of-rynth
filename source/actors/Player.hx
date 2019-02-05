@@ -9,7 +9,7 @@ import flixel.system.debug.console.ConsoleUtil;
 
 class Player extends FlxSprite {
 	public var speed:Float = 100;
-	public var inventory:List<BaseItem>;
+	public var inv:List<BaseItem>;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
@@ -26,20 +26,12 @@ class Player extends FlxSprite {
 		setSize(8, 14);
 		offset.set(4, 2);
 
-		inventory = new List<BaseItem>();
-
+		inv = new List<BaseItem>();
 	}
 
 	override public function update(elapsed:Float):Void {
 		movement();
-		if (FlxG.keys.justPressed.SPACE) {
-			if (inventory.length > 0) {
-				ConsoleUtil.log("The active item had been used!");
-				inventory.remove(inventory.last());
-			} else {
-				ConsoleUtil.log("No items to use!");
-			}
-		}
+		activeItemUsing();
 		super.update(elapsed);
 	}
 
@@ -97,4 +89,16 @@ class Player extends FlxSprite {
 			}
 		}
 	}
+
+	function activeItemUsing():Void {
+		if (FlxG.keys.justPressed.SPACE) {
+			if (inv.length > 0) {
+				ConsoleUtil.log("The active item had been used!");
+				inv.remove(inv.last());
+			} else {
+				ConsoleUtil.log("No items to use!");
+			}
+		}
+	}
 }
+

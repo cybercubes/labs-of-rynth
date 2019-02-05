@@ -8,12 +8,13 @@ import flixel.FlxG;
 import flixel.group.FlxGroup;
 import actors.Player;
 import item.BaseItem;
+import item.PassiveItem;
 import item.ActiveItem;
 
 class PlayState extends FlxState {
 	var _map:FlxOgmoLoader;
 	var _mWalls:FlxTilemap;
-	var _grpActiveItems:FlxTypedGroup<ActiveItem>;
+	var _grpItems:FlxTypedGroup<BaseItem>;
 	var _player:Player;
 
 	override public function create():Void {
@@ -24,13 +25,13 @@ class PlayState extends FlxState {
 		_mWalls.follow();
 		_mWalls.setTileProperties(1, FlxObject.NONE);
 		_mWalls.setTileProperties(2, FlxObject.ANY);
-		_grpActiveItems = new FlxTypedGroup<ActiveItem>();
+		_grpItems = new FlxTypedGroup<BaseItem>();
 		_player = new Player();
 
 		_map.loadEntities(placeEntities, "entities");
 
 		add(_mWalls);
-		add(_grpActiveItems);
+		add(_grpItems);
 		add(_player);
 
 		FlxG.camera.follow(_player, TOPDOWN, 1);
@@ -40,8 +41,7 @@ class PlayState extends FlxState {
 		super.update(elapsed);
 
 		FlxG.collide(_player, _mWalls);
-		FlxG.overlap(_player, _grpActiveItems, BaseItem.makePickable);
-
+		FlxG.overlap(_player, _grpItems, BaseItem.makePickable);
 	}
 
 	function placeEntities(entityName:String, entityData:Xml):Void {
@@ -51,7 +51,11 @@ class PlayState extends FlxState {
 			_player.x = x;
 			_player.y = y;
 		} else if (entityName == "item") {
-			_grpActiveItems.add(new ActiveItem(x, y));
+			if (Std.parseInt(entityData.get("etype")) == 0) {
+				_grpItems.add(new PassiveItem(x, y));
+			} else {
+				_grpItems.add(new ActiveItem(x, y));
+			}
 		}
 	}
 }

@@ -1,11 +1,11 @@
 package item;
 
-class ActiveItem extends BaseItem {
+class PassiveItem extends BaseItem {
 
 	public function new(X:Float = 0, Y:Float = 0) {
 		super(X, Y);
-		itype = 1;
-		loadGraphic("assets/images/apple-" + itype + ".png", false, 8, 8);
+        itype = 0;
+		loadGraphic("assets/images/diamond-" + itype + ".png", false, 8, 8);
 	}
 
 	override public function update(elapsed:Float):Void {

@@ -5,6 +5,8 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 
 class BaseItem extends FlxSprite {
+	public var itype(default, null):Int;
+
 	public function new(X:Float = 0, Y:Float = 0) {
 		super(X + 4, Y + 4);
 	}
@@ -16,7 +18,7 @@ class BaseItem extends FlxSprite {
 	static public function makePickable(P:Player, I:BaseItem):Void {
 		if (P.alive && P.exists && I.alive && I.exists) {
 			if (FlxG.keys.pressed.E) {
-				P.inventory.add(I);
+				P.inv.add(I);
 				I.kill();
 			}
 		}
