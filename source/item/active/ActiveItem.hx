@@ -1,4 +1,4 @@
-package item;
+package item.active;
 
 class ActiveItem extends BaseItem {
 
