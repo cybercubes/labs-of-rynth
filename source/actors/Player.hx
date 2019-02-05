@@ -107,4 +107,13 @@ class Player extends FlxSprite {
 			}
 		}
 	}
+
+	public function pickUpAnItem(P:Player, I:BaseItem):Void {
+		if (P.alive && P.exists && I.alive && I.exists) {
+			if (FlxG.keys.pressed.E) {
+				P.inv.add(I);
+				I.kill();
+			}
+		}
+	}
 }

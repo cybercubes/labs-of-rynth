@@ -1,11 +1,9 @@
 package item;
 
-import actors.Player;
 import flixel.FlxSprite;
-import flixel.FlxG;
 
 class BaseItem extends FlxSprite {
-	public var isActive(default, null):Bool;
+	public var isActive:Bool;
 
 	public function new(X:Float = 0, Y:Float = 0) {
 		super(X + 4, Y + 4);
@@ -15,12 +13,4 @@ class BaseItem extends FlxSprite {
 		super.update(elapsed);
 	}
 
-	static public function makePickable(P:Player, I:BaseItem):Void {
-		if (P.alive && P.exists && I.alive && I.exists) {
-			if (FlxG.keys.pressed.E) {
-				P.inv.add(I);
-				I.kill();
-			}
-		}
-	}
 }

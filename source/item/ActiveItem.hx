@@ -10,4 +10,5 @@ class ActiveItem extends BaseItem {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 	}
+	
 }

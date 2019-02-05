@@ -41,7 +41,7 @@ class PlayState extends FlxState {
 		super.update(elapsed);
 
 		FlxG.collide(_player, _mWalls);
-		FlxG.overlap(_player, _grpItems, BaseItem.makePickable);
+		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
 	}
 
 	function placeEntities(entityName:String, entityData:Xml):Void {
