@@ -9,8 +9,8 @@ import item.BaseItem;
 
 class Player extends FlxSprite {
 	public var speed:Float = 100;
-	public var invActiveItems:List<BaseItem>;
-	public var invPassiveItems:List<BaseItem>;
+	public var activeItems:List<BaseItem>;
+	public var passiveItems:List<BaseItem>;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
@@ -27,13 +27,13 @@ class Player extends FlxSprite {
 		setSize(8, 14);
 		offset.set(4, 2);
 
-		invActiveItems = new List<BaseItem>();
-		invPassiveItems = new List<BaseItem>();
+		activeItems = new List<BaseItem>();
+		passiveItems = new List<BaseItem>();
 	}
 
 	override public function update(elapsed:Float):Void {
 		movement();
-		activeItemUsing();
+		useActiveItem();
 		super.update(elapsed);
 	}
 
@@ -92,13 +92,13 @@ class Player extends FlxSprite {
 		}
 	}
 
-	function activeItemUsing():Void {
+	function useActiveItem():Void {
 
 		// using an active item
 		if (FlxG.keys.justPressed.SPACE) {
-			if (invActiveItems.length > 0) {
+			if (activeItems.length > 0) {
 				ConsoleUtil.log("The active item had been used!");
-				invActiveItems.remove(invActiveItems.last());
+				activeItems.remove(activeItems.last());
 			} else {
 				ConsoleUtil.log("No active items to use!");
 			}
@@ -107,12 +107,12 @@ class Player extends FlxSprite {
 		// displaying items in a log
 		if (FlxG.keys.justPressed.I) {
 			var activeItemsLog:String = "Active Items: ";
-			for (item in invActiveItems) {
+			for (item in activeItems) {
 				activeItemsLog += item.name + ";";
 			}
 
 			var passiveItemsLog:String = "Passive Items: ";
-			for (item in invPassiveItems) {
+			for (item in passiveItems) {
 				passiveItemsLog += item.name + ";";
 			}
 
@@ -125,9 +125,9 @@ class Player extends FlxSprite {
 		if (P.alive && P.exists && I.alive && I.exists) {
 			if (FlxG.keys.pressed.E) {
 				if (I.isActive) {
-					P.invActiveItems.add(I);
+					P.activeItems.add(I);
 				} else {
-					P.invPassiveItems.add(I);
+					P.passiveItems.add(I);
 				}
 				I.kill();
 			}

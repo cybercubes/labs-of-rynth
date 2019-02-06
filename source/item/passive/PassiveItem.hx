@@ -1,4 +1,4 @@
-package item;
+package item.passive;
 
 class PassiveItem extends BaseItem {
 	public function new(X:Float = 0, Y:Float = 0, Name:String) {
