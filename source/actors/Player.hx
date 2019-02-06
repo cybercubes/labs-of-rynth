@@ -9,7 +9,8 @@ import item.BaseItem;
 
 class Player extends FlxSprite {
 	public var speed:Float = 100;
-	public var inv:List<BaseItem>;
+	public var activeItems:List<BaseItem>;
+	public var passiveItems:List<BaseItem>;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
@@ -26,12 +27,13 @@ class Player extends FlxSprite {
 		setSize(8, 14);
 		offset.set(4, 2);
 
-		inv = new List<BaseItem>();
+		activeItems = new List<BaseItem>();
+		passiveItems = new List<BaseItem>();
 	}
 
 	override public function update(elapsed:Float):Void {
 		movement();
-		activeItemUsing();
+		useActiveItem();
 		super.update(elapsed);
 	}
 
@@ -90,28 +92,43 @@ class Player extends FlxSprite {
 		}
 	}
 
-	function activeItemUsing():Void {
+	function useActiveItem():Void {
+
+		// using an active item
 		if (FlxG.keys.justPressed.SPACE) {
-			if (inv.length > 0) {
-				var activeItemsList = Lambda.filter(inv, function(v) {
-					return (v.isActive);
-				});
-				if (activeItemsList.length > 0) {
-					ConsoleUtil.log("The active item had been used!");
-					inv.remove(activeItemsList.last());
-				} else {
-					ConsoleUtil.log("No active items to use!");
-				}
+			if (activeItems.length > 0) {
+				ConsoleUtil.log("The active item had been used!");
+				activeItems.remove(activeItems.last());
 			} else {
-				ConsoleUtil.log("You don't have any items in the inv!");
+				ConsoleUtil.log("No active items to use!");
 			}
+		}
+
+		// displaying items in a log
+		if (FlxG.keys.justPressed.I) {
+			var activeItemsLog:String = "Active Items: ";
+			for (item in activeItems) {
+				activeItemsLog += item.name + ";";
+			}
+
+			var passiveItemsLog:String = "Passive Items: ";
+			for (item in passiveItems) {
+				passiveItemsLog += item.name + ";";
+			}
+
+			ConsoleUtil.log(activeItemsLog);
+			ConsoleUtil.log(passiveItemsLog);
 		}
 	}
 
 	public function pickUpAnItem(P:Player, I:BaseItem):Void {
 		if (P.alive && P.exists && I.alive && I.exists) {
 			if (FlxG.keys.pressed.E) {
-				P.inv.add(I);
+				if (I.isActive) {
+					P.activeItems.add(I);
+				} else {
+					P.passiveItems.add(I);
+				}
 				I.kill();
 			}
 		}

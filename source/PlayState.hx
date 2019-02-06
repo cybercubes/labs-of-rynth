@@ -8,8 +8,8 @@ import flixel.FlxG;
 import flixel.group.FlxGroup;
 import actors.Player;
 import item.BaseItem;
-import item.PassiveItem;
-import item.active.ConsumableItem;
+import item.passive.PassiveItem;
+import item.active.consumable.Food;
 
 class PlayState extends FlxState {
 	var _map:FlxOgmoLoader;
@@ -54,7 +54,7 @@ class PlayState extends FlxState {
 			var name:String = entityData.get("name");
 			switch (name) {
 				case "apple":
-					_grpItems.add(new ConsumableItem(x, y, name));
+					_grpItems.add(new Food(x, y, name, 5));
 				case "diamond":
 					_grpItems.add(new PassiveItem(x, y, name));
 			}

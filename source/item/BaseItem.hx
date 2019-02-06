@@ -4,6 +4,7 @@ import flixel.FlxSprite;
 
 class BaseItem extends FlxSprite {
 	public var isActive:Bool;
+	public var name:String;
 
 	public function new(X:Float = 0, Y:Float = 0) {
 		super(X + 4, Y + 4);
