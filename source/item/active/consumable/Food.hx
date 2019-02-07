@@ -6,7 +6,7 @@ class Food extends ConsumableItem {
 	public function new(X:Float = 0, Y:Float = 0, Name:String, healthToRestorePerSec:Int) {
 		super(X, Y);
 		name = Name;
-		loadGraphic("assets/images/active_items/" + Name + ".png", false, 8, 8);
+		loadGraphic("assets/images/active_items/" + name + ".png", false, 8, 8);
 		this.healthToRestorePerSec = healthToRestorePerSec;
 	}
 

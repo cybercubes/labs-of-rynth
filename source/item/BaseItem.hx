@@ -1,5 +1,6 @@
 package item;
 
+import actors.Player;
 import flixel.FlxSprite;
 
 class BaseItem extends FlxSprite {
@@ -14,4 +15,5 @@ class BaseItem extends FlxSprite {
 		super.update(elapsed);
 	}
 
+	public function onUse(P:Player):Void {}
 }

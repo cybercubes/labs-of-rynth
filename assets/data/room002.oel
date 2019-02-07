@@ -32,10 +32,10 @@
   <entities>
     <player id="0" x="176" y="224" />
     <item id="1" x="512" y="224" name="diamond" />
-    <item id="2" x="448" y="272" name="apple" />
-    <item id="3" x="464" y="240" name="apple" />
     <item id="4" x="528" y="256" name="diamond" />
     <item id="5" x="528" y="192" name="diamond" />
-    <item id="6" x="480" y="192" name="apple" />
+    <item id="2" x="320" y="208" name="elixir" />
+    <item id="3" x="320" y="240" name="elixir" />
+    <item id="6" x="320" y="272" name="elixir" />
   </entities>
 </level>

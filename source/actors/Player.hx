@@ -5,15 +5,21 @@ import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
 import flixel.system.debug.console.ConsoleUtil;
+import flixel.ui.FlxBar;
 import item.BaseItem;
 
 class Player extends FlxSprite {
 	public var speed:Float = 100;
 	public var activeItems:List<BaseItem>;
 	public var passiveItems:List<BaseItem>;
+	public var healthBar:FlxBar;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
+
+		health = 20;
+		healthBar = new FlxBar(16, 64, FlxBarFillDirection.LEFT_TO_RIGHT, 32, 4, this, "health");
+		healthBar.trackParent(-7, -8);
 
 		loadGraphic(AssetPaths.player__png, true, 16, 16);
 		setFacingFlip(FlxObject.LEFT, false, false);
@@ -93,12 +99,11 @@ class Player extends FlxSprite {
 	}
 
 	function useActiveItem():Void {
-
 		// using an active item
 		if (FlxG.keys.justPressed.SPACE) {
 			if (activeItems.length > 0) {
-				ConsoleUtil.log("The active item had been used!");
-				activeItems.remove(activeItems.last());
+				var lastItem = activeItems.last();
+				lastItem.onUse(this);
 			} else {
 				ConsoleUtil.log("No active items to use!");
 			}
@@ -118,6 +123,7 @@ class Player extends FlxSprite {
 
 			ConsoleUtil.log(activeItemsLog);
 			ConsoleUtil.log(passiveItemsLog);
+			ConsoleUtil.log("Health: " + this.health);
 		}
 	}
 
