@@ -10,12 +10,14 @@ import actors.Player;
 import item.BaseItem;
 import item.passive.PassiveItem;
 import item.active.consumable.Food;
+import item.active.consumable.Elixir;
 
 class PlayState extends FlxState {
 	var _map:FlxOgmoLoader;
 	var _mWalls:FlxTilemap;
 	var _grpItems:FlxTypedGroup<BaseItem>;
 	var _player:Player;
+	
 
 	override public function create():Void {
 		super.create();
@@ -33,6 +35,7 @@ class PlayState extends FlxState {
 		add(_mWalls);
 		add(_grpItems);
 		add(_player);
+		add(_player.healthBar);
 
 		FlxG.camera.follow(_player, TOPDOWN, 1);
 	}
@@ -57,6 +60,8 @@ class PlayState extends FlxState {
 					_grpItems.add(new Food(x, y, name, 5));
 				case "diamond":
 					_grpItems.add(new PassiveItem(x, y, name));
+				case "elixir":
+					_grpItems.add(new Elixir(x, y, name, 20));
 			}
 		}
 	}
