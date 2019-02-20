@@ -17,7 +17,7 @@ class PlayState extends FlxState {
 	var _mWalls:FlxTilemap;
 	var _grpItems:FlxTypedGroup<BaseItem>;
 	var _player:Player;
-	
+
 
 	override public function create():Void {
 		super.create();
@@ -45,6 +45,8 @@ class PlayState extends FlxState {
 
 		FlxG.collide(_player, _mWalls);
 		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
+
+		if (FlxG.keys.pressed.ESCAPE) FlxG.switchState(new PauseState());
 	}
 
 	function placeEntities(entityName:String, entityData:Xml):Void {
