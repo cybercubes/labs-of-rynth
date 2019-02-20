@@ -107,7 +107,11 @@ class Player extends FlxSprite {
 			} else {
 				ConsoleUtil.log("No active items to use!");
 			}
+		} else if (FlxG.keys.justPressed.Z) {
+
 		}
+
+
 
 		// displaying items in a log
 		if (FlxG.keys.justPressed.I) {

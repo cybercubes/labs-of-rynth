@@ -9,7 +9,8 @@ import flixel.group.FlxGroup;
 import actors.Player;
 import item.BaseItem;
 import item.passive.PassiveItem;
-import item.active.consumable.ConsumableItem;
+import item.active.ConsumableItem;
+import item.active.MeleeWeapon;
 
 class PlayState extends FlxState {
 	var _map:FlxOgmoLoader;
@@ -60,6 +61,8 @@ class PlayState extends FlxState {
 					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "diamond":
 					_grpItems.add(new PassiveItem(x, y, name));
+				case "sword":
+					_grpItems.add(new MeleeWeapon(x, y, name));
 			}
 		}
 	}

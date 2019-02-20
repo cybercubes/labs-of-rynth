@@ -1,4 +1,4 @@
-package item.active.consumable;
+package item.active;
 
 import actors.Player;
 
