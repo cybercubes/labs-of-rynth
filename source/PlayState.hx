@@ -9,15 +9,13 @@ import flixel.group.FlxGroup;
 import actors.Player;
 import item.BaseItem;
 import item.passive.PassiveItem;
-import item.active.consumable.Food;
-import item.active.consumable.Elixir;
+import item.active.consumable.ConsumableItem;
 
 class PlayState extends FlxState {
 	var _map:FlxOgmoLoader;
 	var _mWalls:FlxTilemap;
 	var _grpItems:FlxTypedGroup<BaseItem>;
 	var _player:Player;
-	
 
 	override public function create():Void {
 		super.create();
@@ -57,11 +55,11 @@ class PlayState extends FlxState {
 			var name:String = entityData.get("name");
 			switch (name) {
 				case "apple":
-					_grpItems.add(new Food(x, y, name, 5));
+					_grpItems.add(new ConsumableItem(x, y, name, 5, 3));
+				case "elixir":
+					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "diamond":
 					_grpItems.add(new PassiveItem(x, y, name));
-				case "elixir":
-					_grpItems.add(new Elixir(x, y, name, 20));
 			}
 		}
 	}
