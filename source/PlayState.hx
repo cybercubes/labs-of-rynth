@@ -14,17 +14,19 @@ import item.passive.PassiveItem;
 import item.active.consumable.Food;
 import item.active.consumable.Elixir;
 
+class PlayState extends FlxState
+{
 	var _map:FlxOgmoLoader;
 	var _mWalls:FlxTilemap;
 	var _grpItems:FlxTypedGroup<BaseItem>;
-  var _monsterS:FlxTypedGroup<Monster>;
+  	var _monsterS:FlxTypedGroup<Monster>;
 	var _player:Player;
 
 
 	override public function create():Void {
 		super.create();
 
-		_map = new FlxOgmoLoader(AssetPaths.room002__oel);
+		_map = new FlxOgmoLoader(AssetPaths.room003__oel);
 		_mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
 		_mWalls.follow();
 		_mWalls.setTileProperties(1, FlxObject.NONE);
@@ -49,9 +51,12 @@ import item.active.consumable.Elixir;
 		super.update(elapsed);
 
 		FlxG.collide(_player, _mWalls);
-		FlxG.overlap(_player, _grpCoins, playerTouchCoin);
 		FlxG.collide(_monsterS, _mWalls);
  		_monsterS.forEachAlive(checkEnemyVision);
+
+		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
+
+		if (FlxG.keys.pressed.ESCAPE) FlxG.switchState(new PauseState());
 	}
 
 	function checkEnemyVision(e:Monster):Void
@@ -70,11 +75,7 @@ import item.active.consumable.Elixir;
 		{
 			e.seesPlayer = true;
 		}
- }
-		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
-
-		if (FlxG.keys.pressed.ESCAPE) FlxG.switchState(new PauseState());
-	}
+ 	}
 
 	function placeEntities(entityName:String, entityData:Xml):Void {
 		var x:Int = Std.parseInt(entityData.get("x"));
