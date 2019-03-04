@@ -1,18 +1,21 @@
- package actors;
-import flixel.math.FlxVelocity;
-import flixel.FlxG;
+ package actors.brain;
+ import flixel.math.FlxVelocity;
+ import flixel.FlxG;
  import flixel.FlxObject;
  import flixel.FlxSprite;
  import flixel.math.FlxPoint;
+ import actors.brain.FSM;
 
  class Monster extends FlxSprite
  {
+    public var range:Float = 0;
     var _brain:FSM;
     var _idleTmr:Float;
     var _moveDir:Float;
     public var seesPlayer:Bool = false;
+    public var rememberPlayerPos:Bool = false;
     public var playerPos(default, null):FlxPoint;
-    public var speed:Float = 50;
+    public var speed:Float = 100;
     public var etype(default, null):Int;
 
     public function new(?X:Float=0, ?Y:Float=0, EType:Int)
@@ -25,7 +28,7 @@ import flixel.FlxG;
         animation.add("d", [0, 1, 0, 2], 6, false);
         animation.add("lr", [3, 4, 3, 5], 6, false);
         animation.add("u", [6, 7, 6, 8], 6, false);
-        drag.x = drag.y = 2400; //drag is a value that determines how quickly the body will slowdown
+        drag.x = drag.y = 10; //drag is a value that determines how quickly the body will slowdown
         width = 8;
         height = 14;
         offset.x = 4;
@@ -33,6 +36,7 @@ import flixel.FlxG;
         _brain = new FSM(idle);
         _idleTmr = 0;
         playerPos = FlxPoint.get();
+        
     }
 
      override public function draw():Void
@@ -85,9 +89,9 @@ import flixel.FlxG;
                 {
                     _moveDir = FlxG.random.int(0, 8) * 45;
 
-                    velocity.set(speed * 0.5, 0);
+                    velocity.set(speed * 0.3, 0);
                     velocity.rotate(FlxPoint.weak(), _moveDir);
-
+                    
                 }
                 _idleTmr = FlxG.random.int(1, 4);            
             }
@@ -107,10 +111,13 @@ import flixel.FlxG;
                 FlxVelocity.moveTowardsPoint(this, playerPos, Std.int(speed));
             }
         }
-
+        public function visionRange():Void
+         {
+            
+         }
         override public function update(elapsed:Float):Void
         {
-     _brain.update();
-     super.update(elapsed);
- }
+            _brain.update();
+            super.update(elapsed);
+        }
  }

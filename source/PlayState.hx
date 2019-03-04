@@ -2,7 +2,7 @@ package ;
 
 import flixel.FlxState;
 import actors.Player;
-import actors.Monster;
+import actors.brain.Monster;
 import actors.Coin;
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
@@ -60,9 +60,17 @@ class PlayState extends FlxState
 		{
 			e.seesPlayer = true;
 			e.playerPos.copyFrom(_player.getMidpoint());
+			//e.rememberPlayerPos = true;	
 		}
-		else
+		else if (e.rememberPlayerPos = true)
+			{	
 			e.seesPlayer = false;
+			}
+			else
+			{
+			e.seesPlayer = true;
+			}
+		
 	}
 
 	function placeEntities(entityName:String, entityData:Xml):Void
