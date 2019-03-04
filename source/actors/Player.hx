@@ -1,5 +1,6 @@
 package actors;
 
+import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
@@ -7,6 +8,7 @@ import flixel.FlxObject;
 import flixel.system.debug.console.ConsoleUtil;
 import flixel.ui.FlxBar;
 import item.BaseItem;
+
 
 class Player extends FlxSprite {
 	public var speed:Float = 100;
