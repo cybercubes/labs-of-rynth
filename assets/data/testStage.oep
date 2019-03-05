@@ -16,7 +16,7 @@
     <Width>640</Width>
     <Height>480</Height>
   </LevelMaximumSize>
-  <Filename>C:\Users\Kirill\labsOfRynth\assets\data\testStage.oep</Filename>
+  <Filename>C:\Users\Vasya\Documents\GitHub\labs-of-rynth\assets\data\testStage.oep</Filename>
   <AngleMode>Radians</AngleMode>
   <CameraEnabled>false</CameraEnabled>
   <CameraSize>
@@ -55,7 +55,7 @@
   <Tilesets>
     <Tileset>
       <Name>tiles</Name>
-      <FilePath>..\..\..\Desktop\tiles.png</FilePath>
+      <FilePath>..\images\tiles.png</FilePath>
       <TileSize>
         <Width>16</Width>
         <Height>16</Height>
@@ -79,7 +79,7 @@
       <ValueDefinitions />
       <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
     </EntityDefinition>
-    <EntityDefinition Name="coin" Limit="-1" ResizableX="false" ResizableY="false" Rotatable="false" RotateIncrement="15">
+    <EntityDefinition Name="item" Limit="-1" ResizableX="false" ResizableY="false" Rotatable="false" RotateIncrement="15">
       <Size>
         <Width>16</Width>
         <Height>16</Height>
@@ -89,9 +89,11 @@
         <Y>0</Y>
       </Origin>
       <ImageDefinition DrawMode="Rectangle" ImagePath="" Tiled="false">
-        <RectColor A="255" R="255" G="255" B="0" />
+        <RectColor A="255" R="255" G="0" B="255" />
       </ImageDefinition>
-      <ValueDefinitions />
+      <ValueDefinitions>
+        <ValueDefinition xsi:type="StringValueDefinition" Name="name" Default="apple" MaxChars="-1" MultiLine="false" />
+      </ValueDefinitions>
       <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
     </EntityDefinition>
   </EntityDefinitions>
