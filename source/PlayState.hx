@@ -1,5 +1,7 @@
 package ;
 
+import flixel.util.FlxColor;
+import flixel.addons.weapon.FlxWeapon;
 import flixel.FlxState;
 import actors.Player;
 import actors.brain.Monster;
@@ -11,8 +13,10 @@ import flixel.group.FlxGroup;
 import actors.Player;
 import item.BaseItem;
 import item.passive.PassiveItem;
-import item.active.consumable.Food;
-import item.active.consumable.Elixir;
+import item.active.ConsumableItem;
+import flixel.addons.weapon.FlxBullet;
+import flixel.util.helpers.FlxBounds;
+import flixel.math.FlxPoint;
 
 class PlayState extends FlxState
 {
@@ -21,7 +25,6 @@ class PlayState extends FlxState
 	var _grpItems:FlxTypedGroup<BaseItem>;
   	var _monsterS:FlxTypedGroup<Monster>;
 	var _player:Player;
-
 
 	override public function create():Void {
 		super.create();
@@ -87,11 +90,21 @@ class PlayState extends FlxState
 			var name:String = entityData.get("name");
 			switch (name) {
 				case "apple":
-					_grpItems.add(new Food(x, y, name, 5));
+					_grpItems.add(new ConsumableItem(x, y, name, 5, 3));
+				case "elixir":
+					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "diamond":
 					_grpItems.add(new PassiveItem(x, y, name));
-				case "elixir":
-					_grpItems.add(new Elixir(x, y, name, 20));
+				case "pistol":
+					_grpItems.add(new FlxWeapon(name, // the following function is the factory function.
+						// FlxWeapon will call this function to get an instance of
+						// bullet whenever it has to create one
+					function(weapon) {
+						// so you create the bullet, do something to it, then return it
+						var b = new FlxBullet();
+						b.makeGraphic(4, 4, FlxColor.RED);
+						return b;
+					}, FlxWeaponFireFrom.PARENT(_player, new FlxBounds<FlxPoint>(FlxPoint.get(0, 0))), FlxWeaponSpeedMode.SPEED(new FlxBounds<Float>(500)), x, y));
 			}
 		}
 		else if (entityName == "monster")

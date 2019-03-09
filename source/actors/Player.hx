@@ -14,6 +14,7 @@ class Player extends FlxSprite {
 	public var speed:Float = 100;
 	public var activeItems:List<BaseItem>;
 	public var passiveItems:List<BaseItem>;
+	public var weapons:List<BaseItem>;
 	public var healthBar:FlxBar;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
@@ -37,6 +38,7 @@ class Player extends FlxSprite {
 
 		activeItems = new List<BaseItem>();
 		passiveItems = new List<BaseItem>();
+		weapons = new List<BaseItem>();
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -109,6 +111,18 @@ class Player extends FlxSprite {
 			} else {
 				ConsoleUtil.log("No active items to use!");
 			}
+		} else if (FlxG.keys.justPressed.Z) {
+			if (weapons.length > 0) {
+				var weapon = weapons.last();
+				var res = weapon.onUse(this);
+				if (res) {
+					ConsoleUtil.log("Fired!");
+				} else {
+					ConsoleUtil.log("Not fired!");
+				}
+			} else {
+				ConsoleUtil.log("No weapons to use!");
+			}
 		}
 
 		// displaying items in a log
@@ -123,8 +137,15 @@ class Player extends FlxSprite {
 				passiveItemsLog += item.name + ";";
 			}
 
+			var weaponsLog:String = "weapons: ";
+			for (item in weapons) {
+				weaponsLog += item.name + ";";
+			}
+
 			ConsoleUtil.log(activeItemsLog);
 			ConsoleUtil.log(passiveItemsLog);
+			ConsoleUtil.log(weaponsLog);
+
 			ConsoleUtil.log("Health: " + this.health);
 		}
 	}
@@ -133,7 +154,11 @@ class Player extends FlxSprite {
 		if (P.alive && P.exists && I.alive && I.exists) {
 			if (FlxG.keys.pressed.E) {
 				if (I.isActive) {
-					P.activeItems.add(I);
+					if (I.isWeapon) {
+						P.weapons.add(I);
+					} else {
+						P.activeItems.add(I);
+					}
 				} else {
 					P.passiveItems.add(I);
 				}
