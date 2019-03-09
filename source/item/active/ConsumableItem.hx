@@ -8,7 +8,7 @@ class ConsumableItem extends ActiveItem {
 
 	public function new(X:Float = 0, Y:Float = 0, Name:String, healthToRestore:Int, times:Int = 1) {
 		super(X, Y);
-
+		isWeapon = false;
 		name = Name;
 		loadGraphic("assets/images/active_items/" + name + ".png", false, 8, 8);
 		this.healthToRestore = healthToRestore;
@@ -19,7 +19,7 @@ class ConsumableItem extends ActiveItem {
 		super.update(elapsed);
 	}
 
-	override public function onUse(P:Player):Void {
+	override public function onUse(P:Player):Bool {
 		var lastItem = P.activeItems.last();
 		P.activeItems.remove(lastItem);
 
@@ -36,5 +36,6 @@ class ConsumableItem extends ActiveItem {
 		} else {
 			P.health = P.health + healthToRestore;
 		}
+		return true;
 	}
 }

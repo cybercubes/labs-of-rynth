@@ -3,6 +3,7 @@ package item.active;
 import actors.Player;
 
 class ActiveItem extends BaseItem {
+
 	public function new(X:Float = 0, Y:Float = 0) {
 		super(X, Y);
 		isActive = true;
@@ -12,5 +13,7 @@ class ActiveItem extends BaseItem {
 		super.update(elapsed);
 	}
 
-	override public function onUse(P:Player):Void {}
+	override public function onUse(P:Player):Bool {
+		return true;
+	}
 }
