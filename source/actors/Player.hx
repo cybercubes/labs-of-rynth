@@ -1,6 +1,5 @@
 package actors;
 
-import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
@@ -9,9 +8,8 @@ import flixel.system.debug.console.ConsoleUtil;
 import flixel.ui.FlxBar;
 import item.BaseItem;
 
-
 class Player extends FlxSprite {
-	public var speed:Float = 100;
+	public var speed:Float = 125;
 	public var activeItems:List<BaseItem>;
 	public var passiveItems:List<BaseItem>;
 	public var weapons:List<BaseItem>;
@@ -102,8 +100,8 @@ class Player extends FlxSprite {
 		}
 	}
 
+	// using an active item
 	function useActiveItem():Void {
-		// using an active item
 		if (FlxG.keys.justPressed.SPACE) {
 			if (activeItems.length > 0) {
 				var lastItem = activeItems.last();
@@ -114,12 +112,7 @@ class Player extends FlxSprite {
 		} else if (FlxG.keys.justPressed.Z) {
 			if (weapons.length > 0) {
 				var weapon = weapons.last();
-				var res = weapon.onUse(this);
-				if (res) {
-					ConsoleUtil.log("Fired!");
-				} else {
-					ConsoleUtil.log("Not fired!");
-				}
+				weapon.onUse(this);
 			} else {
 				ConsoleUtil.log("No weapons to use!");
 			}

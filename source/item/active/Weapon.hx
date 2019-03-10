@@ -1,9 +1,11 @@
 package item.active;
 
-import actors.Player;
+import flixel.FlxObject;
+import flixel.FlxG;
 import flixel.FlxSprite;
+import actors.Player;
 
-class MeleeWeapon extends ActiveItem {
+class Weapon extends ActiveItem {
 	public var damage:Int;
 	public var speed:Float;
 
@@ -23,6 +25,18 @@ class MeleeWeapon extends ActiveItem {
 	}
 
 	override public function onUse(P:Player):Bool {
+		var playState:PlayState = cast FlxG.state;
+		var bullet:Projectile = playState._playerBullets.recycle();
+		bullet.reset(P.x + P.width / 2 - bullet.width / 2, P.y);
+		if (P.facing == FlxObject.RIGHT) {
+			bullet.velocity.x = 140;
+		} else if (P.facing == FlxObject.LEFT) {
+			bullet.velocity.x = -140;
+		} else if (P.facing == FlxObject.UP) {
+			bullet.velocity.y = -140;
+		} else {
+			bullet.velocity.y = 140;
+		}
 		return true;
 	}
 }
