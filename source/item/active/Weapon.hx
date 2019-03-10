@@ -8,6 +8,8 @@ import actors.Player;
 class Weapon extends ActiveItem {
 	public var damage:Int;
 	public var speed:Float;
+	var offsetX:Float;
+	var offsetY:Float;
 
 	var owner:FlxSprite;
 
@@ -16,6 +18,8 @@ class Weapon extends ActiveItem {
 		isWeapon = true;
 		name = Name;
 		loadGraphic("assets/images/active_items/weapons/" + name + ".png", false, 8, 8);
+		offsetX = 3;
+		offsetY = 3;
 		this.damage = Damage;
 		this.speed = Speed;
 	}
@@ -29,13 +33,13 @@ class Weapon extends ActiveItem {
 		var bullet:Projectile = playState._playerBullets.recycle();
 		bullet.reset(P.x + P.width / 2 - bullet.width / 2, P.y);
 		if (P.facing == FlxObject.RIGHT) {
-			bullet.velocity.x = 140;
+			bullet.velocity.x = bullet.flySpeed;
 		} else if (P.facing == FlxObject.LEFT) {
-			bullet.velocity.x = -140;
+			bullet.velocity.x = bullet.flySpeed * -1;
 		} else if (P.facing == FlxObject.UP) {
-			bullet.velocity.y = -140;
+			bullet.velocity.y = bullet.flySpeed * -1;
 		} else {
-			bullet.velocity.y = 140;
+			bullet.velocity.y = bullet.flySpeed;
 		}
 		return true;
 	}
