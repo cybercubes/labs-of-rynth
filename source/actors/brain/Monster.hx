@@ -1,5 +1,6 @@
 package actors.brain;
 
+import item.active.Projectile;
 import flixel.math.FlxVelocity;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -107,10 +108,9 @@ class Monster extends FlxSprite {
 		super.update(elapsed);
 	}
 
-	public function takeDamage():Void {
-		health -= 10;
+	public function takeDamage(p:Projectile):Void {
+		this.hurt(p.damage);
 		if (health <= 0) {
-			this.kill();
 			healthBar.kill();
 		}
 	}

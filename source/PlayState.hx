@@ -50,15 +50,15 @@ class PlayState extends FlxState {
 		}
 		add(_player.healthBar);
 		// First we will instantiate the bullets you fire at your enemies.
-		var numPlayerBullets:Int = 100;
+		var numPlayerBullets:Int = 10;
 		// Initializing the array is very important and easy to forget!
 		_playerBullets = new FlxTypedGroup(numPlayerBullets);
 		var bullet:Projectile;
 
-		// Create 8 bullets for the player to recycle
+		// Create 10 bullets for the player to recycle
 		for (i in 0...numPlayerBullets) {
 			// Instantiate a new sprite offscreen
-			bullet = new Projectile(_player);
+			bullet = new Projectile();
 			// Add it to the group of player bullets
 			_playerBullets.add(bullet);
 		}
@@ -78,7 +78,7 @@ class PlayState extends FlxState {
 		_monsterS.forEachAlive(checkEnemyVision);
 
 		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
-		FlxG.overlap(_playerBullets, _vsPlayerBullets, damage);
+		FlxG.overlap(_playerBullets, _vsPlayerBullets, hurt);
 
 		if (FlxG.keys.pressed.ESCAPE)
 			FlxG.switchState(new PauseState());
@@ -110,16 +110,16 @@ class PlayState extends FlxState {
 				case "elixir":
 					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 5, 1));
+					_grpItems.add(new Weapon(x, y, name, 50, 1));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
 		}
 	}
 
-	function damage(Object1:Projectile, Object2:Monster):Void {
+	function hurt(Object1:Projectile, Object2:Monster):Void {
 		Object1.kill();
-		Object2.takeDamage();
+		Object2.takeDamage(Object1);
 	}
 
 	function killBullet(Object1:FlxObject, Object2:FlxObject):Void {
