@@ -7,6 +7,7 @@ class BaseItem extends FlxSprite {
 	public var isActive:Bool;
 	public var isWeapon:Bool;
 	public var name:String;
+	public var owner:FlxSprite;
 
 	public function new(X:Float = 0, Y:Float = 0) {
 		super(X + 4, Y + 4);
