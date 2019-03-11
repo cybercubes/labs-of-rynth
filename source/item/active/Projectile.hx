@@ -10,7 +10,7 @@ class Projectile extends PassiveItem {
 		super(p.x, p.y);
 		// loadGraphic("assets/images/passive_items/projectile.png", false, 8, 8);
         makeGraphic(4, 4, FlxColor.RED);
-		flySpeed = 20;
+		flySpeed = 100;
         exists = false;
 	}
 

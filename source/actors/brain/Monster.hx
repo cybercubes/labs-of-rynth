@@ -106,4 +106,12 @@ class Monster extends FlxSprite {
 		_brain.update();
 		super.update(elapsed);
 	}
+
+	public function takeDamage():Void {
+		health -= 10;
+		if (health <= 0) {
+			this.kill();
+			healthBar.kill();
+		}
+	}
 }

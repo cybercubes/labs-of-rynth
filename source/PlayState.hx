@@ -50,7 +50,7 @@ class PlayState extends FlxState {
 		}
 		add(_player.healthBar);
 		// First we will instantiate the bullets you fire at your enemies.
-		var numPlayerBullets:Int = 8;
+		var numPlayerBullets:Int = 100;
 		// Initializing the array is very important and easy to forget!
 		_playerBullets = new FlxTypedGroup(numPlayerBullets);
 		var bullet:Projectile;
@@ -119,8 +119,7 @@ class PlayState extends FlxState {
 
 	function damage(Object1:Projectile, Object2:Monster):Void {
 		Object1.kill();
-		Object2.kill();
-		Object2.healthBar.kill();
+		Object2.takeDamage();
 	}
 
 	function killBullet(Object1:FlxObject, Object2:FlxObject):Void {

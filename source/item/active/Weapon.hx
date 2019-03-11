@@ -11,8 +11,6 @@ class Weapon extends ActiveItem {
 	var offsetX:Float;
 	var offsetY:Float;
 
-	var owner:FlxSprite;
-
 	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float) {
 		super(X, Y);
 		isWeapon = true;
