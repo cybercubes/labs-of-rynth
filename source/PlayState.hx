@@ -22,7 +22,7 @@ class PlayState extends FlxState
 	{
 		super.create();
 		
-		_map = new FlxOgmoLoader(AssetPaths.room002__oel);
+		_map = new FlxOgmoLoader(AssetPaths.room003__oel);
 
 		_mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
 		_mWalls.follow();
@@ -49,6 +49,10 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 
+		for (monster in _monsterS)
+		{
+			monster.findPlayer(_player);
+		}
 		FlxG.collide(_player, _mWalls);
 		FlxG.overlap(_player, _grpCoins, playerTouchCoin);
 		FlxG.collide(_monsterS, _mWalls);

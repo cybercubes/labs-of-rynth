@@ -1,5 +1,6 @@
 package actors;
 
+import actors.brain.Monster;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxG;
@@ -10,7 +11,7 @@ import flixel.math.FlxPoint;
 class Player extends FlxSprite
 {
     public var speed:Float = 200;
-
+    public var Damage:Float = 10;
     public function new(?X:Float=0, ?Y:Float=0)
     {
         super(X, Y);
@@ -33,9 +34,11 @@ class Player extends FlxSprite
         movement();
         super.update(elapsed);
     }
-
+        
+    
     function movement():Void
     {
+
         var _up:Bool = false;
         var _down:Bool = false;
         var _left:Bool = false;
