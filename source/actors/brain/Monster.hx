@@ -14,17 +14,18 @@
  class Monster extends FlxSprite
  {
     public var range:Float = 0;
-    var _brain:FSM;
-    var _idleTmr:Float;
-    var _moveDir:Float;
+    private var _brain:FSM;
+    private var _idleTmr:Float;
+    private var _moveDir:Float;
    
     public var seesPlayer:Bool = false;
-    public var rememberPlayerPos:Bool = false;
     public var playerPos(default, null):FlxPoint;
     public var speed:Float = 100;
     
     public var Damage:Float;
     public var etype(default, null):Int;
+
+	private var distance:Float;//distance between monster and player
     
     public function new(?X:Float=0, ?Y:Float=0, EType:Int)
     {
@@ -44,7 +45,8 @@
         _brain = new FSM(idle);
         _idleTmr = 0;
         playerPos = FlxPoint.get();
-        health = 100; 
+        health = 100;
+
     }
 
     override public function draw():Void
@@ -81,20 +83,12 @@
         super.draw();
     }
 
-    public function findPlayer(p:Player):Void
+    public function findPlayer(p:Player):Void //finds distance between monster and the player
     {   
-        var cat1:Float = p.x - this.x;
-        var cat2:Float = p.y - this.y;
-        var distance:Float = Math.sqrt((cat2 *cat2) + (cat1 * cat1));
-        this.attackRange(distance);
-    }
+    	var cat1:Float = p.x - this.x;
+    	var cat2:Float = p.y - this.y;
 
-    public function attackRange(d:Float):Void
-    { 
-        if (d < 10)//10 это растояние на какйо длинне запускаетсья процесс 
-        {
-           //Должна вызываться функция нанесения урона
-        }
+    	distance = Math.sqrt((cat2 *cat2) + (cat1 * cat1));
     }
 
     public function takeDamage():Void

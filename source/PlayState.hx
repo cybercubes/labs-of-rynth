@@ -58,22 +58,14 @@ class PlayState extends FlxState
 		FlxG.collide(_monsterS, _mWalls);
  		_monsterS.forEachAlive(checkEnemyVision);
 	}
-	 function checkEnemyVision(e:Monster):Void
+	
+	function checkEnemyVision(e:Monster):Void
 	{
 		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint()))
 		{
 			e.seesPlayer = true;
 			e.playerPos.copyFrom(_player.getMidpoint());
-			//e.rememberPlayerPos = true;	
 		}
-		else if (e.rememberPlayerPos = true)
-			{	
-			e.seesPlayer = false;
-			}
-			else
-			{
-			e.seesPlayer = true;
-			}
 		
 	}
 
