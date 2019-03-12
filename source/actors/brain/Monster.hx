@@ -1,14 +1,14 @@
- package actors.brain;
+package actors.brain;
 
- import flixel.tweens.FlxEase;
- import flixel.tweens.FlxTween;
- import flixel.math.FlxVelocity;
- import flixel.FlxG;
- import flixel.FlxObject;
- import flixel.FlxSprite;
- import flixel.math.FlxPoint;
- import actors.brain.FSM;
- import actors.Player;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import flixel.math.FlxVelocity;
+import flixel.FlxG;
+import flixel.FlxObject;
+import flixel.FlxSprite;
+import flixel.math.FlxPoint;
+import actors.brain.FSM;
+import actors.Player;
 
   
  class Monster extends FlxSprite
@@ -24,6 +24,7 @@
     
     public var Damage:Float;
     public var etype(default, null):Int;
+   	public var healthBar:FlxBar;
 
 	private var distance:Float;//distance between monster and player
     
@@ -37,6 +38,11 @@
         animation.add("d", [0, 1, 0, 2], 6, false);
         animation.add("lr", [3, 4, 3, 5], 6, false);
         animation.add("u", [6, 7, 6, 8], 6, false);
+      
+        health = 100;
+        healthBar = new FlxBar(16, 64, FlxBarFillDirection.LEFT_TO_RIGHT, 32, 4, this, "health");
+        healthBar.trackParent(-7, -8);
+      
         drag.x = drag.y = 10; //drag is a value that determines how quickly the body will slowdown
         width = 8;
         height = 14;
