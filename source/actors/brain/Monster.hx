@@ -9,6 +9,7 @@ import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import actors.brain.FSM;
 import actors.Player;
+import flixel.ui.FlxBar;
 
   
  class Monster extends FlxSprite

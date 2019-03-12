@@ -58,10 +58,11 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		for (monster in _monsterS)
+		for (monster in _monsterS)//updates state of the monsters
 		{
-			monster.findPlayer(_player);
+			//monster.findPlayer(_player);
 		}
+
 		FlxG.collide(_player, _mWalls);
 		FlxG.collide(_monsterS, _mWalls);
  		_monsterS.forEachAlive(checkEnemyVision);
