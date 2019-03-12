@@ -1,6 +1,6 @@
 package actors.brain;
 
-import item.active.Projectile;
+import item.passive.Projectile;
 import flixel.math.FlxVelocity;
 import flixel.FlxG;
 import flixel.FlxObject;

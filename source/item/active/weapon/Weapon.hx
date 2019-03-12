@@ -1,21 +1,24 @@
-package item.active;
+package item.active.weapon;
 
+import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
-import flixel.FlxG;
 import actors.Player;
+import item.passive.Projectile;
 
 class Weapon extends ActiveItem {
 	public var damage:Int;
 	public var speed:Float;
+	public var trajectoryOfShooting:String;
 
-	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float) {
+	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, TrajectoryOfShooting:String) {
 		super(X, Y);
 		isWeapon = true;
 		name = Name;
 		loadGraphic("assets/images/active_items/weapons/" + name + ".png", false, 8, 8);
 		this.damage = Damage;
 		this.speed = Speed;
+		this.trajectoryOfShooting = TrajectoryOfShooting;
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -27,6 +30,7 @@ class Weapon extends ActiveItem {
 		var bullet:Projectile = playState._playerBullets.recycle();
 		bullet.reset(P.x + P.width / 2 - bullet.width / 2, P.y);
 		bullet.damage = this.damage;
+		bullet.lifespan = 3;
 		var mA:Float = 0;
 		if (P.facing == FlxObject.UP) {
 			mA = -90;

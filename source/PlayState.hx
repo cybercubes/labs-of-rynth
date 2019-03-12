@@ -1,8 +1,9 @@
 package;
 
-import flixel.util.FlxColor;
 import actors.brain.Monster;
 import actors.Player;
+import flixel.util.FlxColor;
+import flixel.util.helpers.FlxBounds;
 import flixel.FlxState;
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
@@ -11,8 +12,9 @@ import flixel.FlxG;
 import flixel.group.FlxGroup;
 import item.BaseItem;
 import item.active.ConsumableItem;
-import item.active.Weapon;
-import item.active.Projectile;
+import item.active.weapon.Weapon;
+import item.active.weapon.TrajectoryOfShooting;
+import item.passive.Projectile;
 
 class PlayState extends FlxState {
 	var _map:FlxOgmoLoader;
@@ -66,7 +68,7 @@ class PlayState extends FlxState {
 		// Create 10 bullets for the player to recycle
 		for (i in 0...numPlayerBullets) {
 			// Instantiate a new sprite offscreen
-			bullet = new Projectile();
+			bullet = new Projectile(new FlxBounds<Int>(4, 4), 100);
 			// Add it to the group of player bullets
 			_playerBullets.add(bullet);
 		}
@@ -80,8 +82,7 @@ class PlayState extends FlxState {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		for (monster in _monsterS)
-		{
+		for (monster in _monsterS) {
 			monster.findPlayer(_player);
 		}
 		FlxG.collide(_player, _mWalls);
@@ -92,21 +93,18 @@ class PlayState extends FlxState {
 		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
 		FlxG.overlap(_playerBullets, _vsPlayerBullets, hurt);
 
-		if (FlxG.keys.pressed.ESCAPE)   openSubState(pauseSubState);
+		if (FlxG.keys.pressed.ESCAPE)
+			openSubState(pauseSubState);
 	}
-  
-	function checkEnemyVision(e:Monster):Void
-	{
-		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint()))
-		{
+
+	function checkEnemyVision(e:Monster):Void {
+		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())) {
 			e.seesPlayer = true;
 			e.playerPos.copyFrom(_player.getMidpoint());
 		}
-    
- 	}
+	}
 
-	override public function destroy():Void
-	{
+	override public function destroy():Void {
 		super.destroy();
 
 		pauseSubState.destroy();
@@ -127,7 +125,7 @@ class PlayState extends FlxState {
 				case "elixir":
 					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 25, 1));
+					_grpItems.add(new Weapon(x, y, name, 25, 1, TrajectoryOfShooting.STRAIGHT));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
