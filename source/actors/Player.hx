@@ -1,5 +1,6 @@
 package actors;
 
+import actors.brain.Monster;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxG;
@@ -149,7 +150,7 @@ class Player extends FlxSprite {
 			ConsoleUtil.log("Health: " + this.health);
 		}
 	}
-
+  
 	public function pickUpAnItem(P:Player, I:BaseItem):Void {
 		if (P.alive && P.exists && I.alive && I.exists) {
 			if (FlxG.keys.pressed.E) {
@@ -167,3 +168,4 @@ class Player extends FlxSprite {
 		}
 	}
 }
+
