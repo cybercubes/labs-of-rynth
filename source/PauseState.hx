@@ -6,7 +6,6 @@ class PauseState extends FlxSubState
 {
     var _resumeBtn:FlxButton;
     var _mainMenuBtn:FlxButton;
-    var closeBtn:FlxButton;
 
     override public function create():Void
     {
