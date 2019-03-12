@@ -1,5 +1,6 @@
 package item.passive;
 
+import flixel.FlxG;
 import flixel.util.FlxColor;
 import flixel.util.helpers.FlxBounds;
 import item.passive.PassiveItem;
@@ -22,7 +23,7 @@ class Projectile extends PassiveItem {
 
 	override public function update(elapsed:Float):Void {
 		if (lifespan > 0) {
-			lifespan -= elapsed;
+			lifespan -= FlxG.elapsed;
 
 			if (lifespan <= 0) {
 				kill();

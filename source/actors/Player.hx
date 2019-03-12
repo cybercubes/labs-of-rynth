@@ -14,7 +14,6 @@ class Player extends FlxSprite {
 	public var passiveItems:List<BaseItem>;
 	public var weapons:List<BaseItem>;
 	public var healthBar:FlxBar;
-
 	public var goesUp:Bool;
 	public var goesDown:Bool;
 	public var goesLeft:Bool;
@@ -117,7 +116,11 @@ class Player extends FlxSprite {
 		} else if (FlxG.keys.justPressed.Z) {
 			if (weapons.length > 0) {
 				var weapon = weapons.last();
-				weapon.onUse(this);
+				if (weapon.onUse(this)) {
+					ConsoleUtil.log("Fired!");
+				} else {
+					ConsoleUtil.log("Not fired!");
+				}
 			} else {
 				ConsoleUtil.log("No weapons to use!");
 			}
@@ -147,7 +150,7 @@ class Player extends FlxSprite {
 			ConsoleUtil.log("Health: " + this.health);
 		}
 	}
-  
+
 	public function pickUpAnItem(P:Player, I:BaseItem):Void {
 		if (P.alive && P.exists && I.alive && I.exists) {
 			if (FlxG.keys.pressed.E) {
@@ -160,9 +163,9 @@ class Player extends FlxSprite {
 				} else {
 					P.passiveItems.add(I);
 				}
-				I.kill();
+				I.visible = false;
+				I.reset(0, 0);
 			}
 		}
 	}
 }
-

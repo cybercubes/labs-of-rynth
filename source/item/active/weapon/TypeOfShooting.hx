@@ -1,6 +1,6 @@
 package item.active.weapon;
 
-class TrajectoryOfShooting {
+class TypeOfShooting {
     public static inline var STRAIGHT = "straight";
     public static inline var SHOTGUN = "shotgun";
 }

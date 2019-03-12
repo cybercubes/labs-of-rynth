@@ -13,7 +13,7 @@ import flixel.group.FlxGroup;
 import item.BaseItem;
 import item.active.ConsumableItem;
 import item.active.weapon.Weapon;
-import item.active.weapon.TrajectoryOfShooting;
+import item.active.weapon.TypeOfShooting;
 import item.passive.Projectile;
 
 class PlayState extends FlxState {
@@ -125,7 +125,7 @@ class PlayState extends FlxState {
 				case "elixir":
 					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 25, 1, TrajectoryOfShooting.STRAIGHT));
+					_grpItems.add(new Weapon(x, y, name, 25, 1, TypeOfShooting.STRAIGHT));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));

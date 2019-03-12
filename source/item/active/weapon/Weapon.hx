@@ -9,23 +9,28 @@ import item.passive.Projectile;
 class Weapon extends ActiveItem {
 	public var damage:Int;
 	public var speed:Float;
-	public var trajectoryOfShooting:String;
+	public var typeOfShooting:String;
+	public var timeElapsedSinceLastUse:Float;
 
-	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, TrajectoryOfShooting:String) {
+	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, typeOfShooting:String) {
 		super(X, Y);
 		isWeapon = true;
 		name = Name;
 		loadGraphic("assets/images/active_items/weapons/" + name + ".png", false, 8, 8);
 		this.damage = Damage;
 		this.speed = Speed;
-		this.trajectoryOfShooting = TrajectoryOfShooting;
+		this.typeOfShooting = typeOfShooting;
 	}
 
 	override public function update(elapsed:Float):Void {
+		timeElapsedSinceLastUse += elapsed;
 		super.update(elapsed);
 	}
 
 	override public function onUse(P:Player):Bool {
+		if (timeElapsedSinceLastUse < speed) {
+			return false;
+		}
 		var playState:PlayState = cast FlxG.state;
 		var bullet:Projectile = playState._playerBullets.recycle();
 		bullet.reset(P.x + P.width / 2 - bullet.width / 2, P.y);
@@ -52,6 +57,8 @@ class Weapon extends ActiveItem {
 
 		bullet.velocity.set(bullet.flySpeed, 0);
 		bullet.velocity.rotate(FlxPoint.weak(0, 0), mA);
+
+		timeElapsedSinceLastUse = 0;
 
 		return true;
 	}
