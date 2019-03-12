@@ -23,9 +23,17 @@ class PlayState extends FlxState
   	var _monsterS:FlxTypedGroup<Monster>;
 	var _player:Player;
 
+	// Pause Menu States
+	var pauseSubState:PauseState;
+	var subStateColor:FlxColor;
+
 	override public function create():Void {
 		super.create();
-    
+
+		subStateColor = 0x99808080;
+
+		pauseSubState = new PauseState(subStateColor);
+
 		_map = new FlxOgmoLoader(AssetPaths.room003__oel);
 		_mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
 		_mWalls.follow();
@@ -60,7 +68,7 @@ class PlayState extends FlxState
 
 		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
 
-		if (FlxG.keys.pressed.ESCAPE) FlxG.switchState(new PauseState());
+		if (FlxG.keys.pressed.ESCAPE)   openSubState(pauseSubState);
 	}
   
 	function checkEnemyVision(e:Monster):Void
@@ -72,6 +80,14 @@ class PlayState extends FlxState
 		}
     
  	}
+
+	override public function destroy():Void
+	{
+		super.destroy();
+
+		pauseSubState.destroy();
+		pauseSubState = null;
+	}
 
 	function placeEntities(entityName:String, entityData:Xml):Void {
 		var x:Int = Std.parseInt(entityData.get("x"));
