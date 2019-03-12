@@ -25,7 +25,7 @@ class PlayState extends FlxState
 
 	override public function create():Void {
 		super.create();
-
+    
 		_map = new FlxOgmoLoader(AssetPaths.room003__oel);
 		_mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
 		_mWalls.follow();
@@ -50,6 +50,10 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
+		for (monster in _monsterS)
+		{
+			monster.findPlayer(_player);
+		}
 		FlxG.collide(_player, _mWalls);
 		FlxG.collide(_monsterS, _mWalls);
  		_monsterS.forEachAlive(checkEnemyVision);
@@ -58,23 +62,15 @@ class PlayState extends FlxState
 
 		if (FlxG.keys.pressed.ESCAPE) FlxG.switchState(new PauseState());
 	}
-
+  
 	function checkEnemyVision(e:Monster):Void
 	{
 		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint()))
 		{
 			e.seesPlayer = true;
 			e.playerPos.copyFrom(_player.getMidpoint());
-			//e.rememberPlayerPos = true;	
 		}
-		else if (e.rememberPlayerPos = true)
-		{	
-			e.seesPlayer = false;
-		}
-			else
-		{
-			e.seesPlayer = true;
-		}
+    
  	}
 
 	function placeEntities(entityName:String, entityData:Xml):Void {

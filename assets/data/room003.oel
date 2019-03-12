@@ -35,7 +35,9 @@
    
   
     <monster etype = "0" id="72" x="320" y="224" />
-    
+    <monster etype = "0" id="72" x="340" y="224" />
+    <monster etype = "0" id="72" x="360" y="224" />
+  
     <coin id="1" x="256" y="256" />
     <coin id="2" x="320" y="384" />
     <coin id="3" x="240" y="432" />
