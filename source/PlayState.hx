@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxColor;
 import actors.brain.Monster;
 import actors.Player;
 import flixel.FlxState;
@@ -23,11 +24,18 @@ class PlayState extends FlxState {
 	public var _playerBullets:FlxTypedGroup<Projectile>;
 
 	var _vsPlayerBullets:FlxGroup;
+	// Pause Menu States
+	var pauseSubState:PauseState;
+	var subStateColor:FlxColor;
 
 	override public function create():Void {
 		super.create();
 
-		_map = new FlxOgmoLoader(AssetPaths.room002__oel);
+		subStateColor = 0x99808080;
+
+		pauseSubState = new PauseState(subStateColor);
+
+		_map = new FlxOgmoLoader(AssetPaths.room003__oel);
 		_mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
 		_mWalls.follow();
 		_mWalls.setTileProperties(1, FlxObject.NONE);
@@ -72,6 +80,10 @@ class PlayState extends FlxState {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
+		for (monster in _monsterS)
+		{
+			monster.findPlayer(_player);
+		}
 		FlxG.collide(_player, _mWalls);
 		FlxG.collide(_monsterS, _mWalls);
 		FlxG.collide(_playerBullets, _mWalls, killBullet);
@@ -80,20 +92,25 @@ class PlayState extends FlxState {
 		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
 		FlxG.overlap(_playerBullets, _vsPlayerBullets, hurt);
 
-		if (FlxG.keys.pressed.ESCAPE)
-			FlxG.switchState(new PauseState());
+		if (FlxG.keys.pressed.ESCAPE)   openSubState(pauseSubState);
 	}
-
-	function checkEnemyVision(e:Monster):Void {
-		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())) {
+  
+	function checkEnemyVision(e:Monster):Void
+	{
+		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint()))
+		{
 			e.seesPlayer = true;
 			e.playerPos.copyFrom(_player.getMidpoint());
-			// e.rememberPlayerPos = true;
-		} else if (e.rememberPlayerPos = true) {
-			e.seesPlayer = false;
-		} else {
-			e.seesPlayer = true;
 		}
+    
+ 	}
+
+	override public function destroy():Void
+	{
+		super.destroy();
+
+		pauseSubState.destroy();
+		pauseSubState = null;
 	}
 
 	function placeEntities(entityName:String, entityData:Xml):Void {
@@ -110,7 +127,7 @@ class PlayState extends FlxState {
 				case "elixir":
 					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 50, 1));
+					_grpItems.add(new Weapon(x, y, name, 25, 1));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
