@@ -1,5 +1,6 @@
 package item.active.weapon;
 
+import flixel.system.debug.console.ConsoleUtil;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
@@ -23,7 +24,10 @@ class Weapon extends ActiveItem {
 	}
 
 	override public function update(elapsed:Float):Void {
-		timeElapsedSinceLastUse += elapsed;
+		if (timeElapsedSinceLastUse < speed) {
+			timeElapsedSinceLastUse += elapsed;
+		}
+		ConsoleUtil.log(timeElapsedSinceLastUse);
 		super.update(elapsed);
 	}
 

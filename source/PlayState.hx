@@ -125,7 +125,7 @@ class PlayState extends FlxState {
 				case "elixir":
 					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 25, 1, TypeOfShooting.STRAIGHT));
+					_grpItems.add(new Weapon(x, y, name, 25, 0.5, TypeOfShooting.STRAIGHT));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
