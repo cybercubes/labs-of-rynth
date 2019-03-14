@@ -28,12 +28,12 @@ class PlayState extends FlxState {
 	var _vsPlayerBullets:FlxGroup;
 	// Pause Menu States
 	var pauseSubState:PauseState;
-	var subStateColor:FlxColor;
+	var subStateColor:FlxColor = 0x99808080;
 
 	override public function create():Void {
 		super.create();
 
-		subStateColor = 0x99808080;
+		destroySubStates = false;
 
 		pauseSubState = new PauseState(subStateColor);
 
@@ -82,9 +82,11 @@ class PlayState extends FlxState {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		for (monster in _monsterS) {
+		for (monster in _monsterS)//updates state of the monsters
+		{
 			monster.findPlayer(_player);
 		}
+
 		FlxG.collide(_player, _mWalls);
 		FlxG.collide(_monsterS, _mWalls);
 		FlxG.collide(_playerBullets, _mWalls, killBullet);
@@ -93,8 +95,7 @@ class PlayState extends FlxState {
 		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
 		FlxG.overlap(_playerBullets, _vsPlayerBullets, hurt);
 
-		if (FlxG.keys.pressed.ESCAPE)
-			openSubState(pauseSubState);
+		if (FlxG.keys.pressed.ESCAPE) openSubState(pauseSubState);
 	}
 
 	function checkEnemyVision(e:Monster):Void {
