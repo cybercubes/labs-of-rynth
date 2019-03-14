@@ -36,5 +36,6 @@
     <monster id="72" x="360" y="224" etype="0" />
     <item id="1" x="240" y="240" name="pistol" />
     <item id="2" x="512" y="224" name="elixir" />
+    <item id="3" x="272" y="432" name="shotgun" />
   </entities>
 </level>

@@ -1,23 +1,27 @@
 package actors;
 
+import flixel.util.FlxAxes;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
 import flixel.system.debug.console.ConsoleUtil;
 import flixel.ui.FlxBar;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import item.BaseItem;
 
 class Player extends FlxSprite {
 	public var speed:Float = 125;
 	public var activeItems:List<BaseItem>;
 	public var passiveItems:List<BaseItem>;
-	public var weapons:List<BaseItem>;
+	public var weapons:FlxTypedGroup<BaseItem>;
 	public var healthBar:FlxBar;
 	public var goesUp:Bool;
 	public var goesDown:Bool;
 	public var goesLeft:Bool;
 	public var goesRight:Bool;
+	public var mA:Float;
+	public var selectedWeapon:Int;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
@@ -40,12 +44,13 @@ class Player extends FlxSprite {
 
 		activeItems = new List<BaseItem>();
 		passiveItems = new List<BaseItem>();
-		weapons = new List<BaseItem>();
+		weapons = new FlxTypedGroup<BaseItem>();
 	}
 
 	override public function update(elapsed:Float):Void {
 		movement();
 		useActiveItem();
+		selectWeapon();
 		super.update(elapsed);
 	}
 
@@ -66,7 +71,7 @@ class Player extends FlxSprite {
 			goesLeft = goesRight = false;
 
 		if (goesLeft || goesRight || goesUp || goesDown) {
-			var mA:Float = 0;
+			mA = 0;
 			if (goesUp) {
 				mA = -90;
 				if (goesLeft)
@@ -115,7 +120,7 @@ class Player extends FlxSprite {
 			}
 		} else if (FlxG.keys.justPressed.Z) {
 			if (weapons.length > 0) {
-				var weapon = weapons.last();
+				var weapon = weapons.members[selectedWeapon - 1];
 				if (weapon.onUse(this)) {
 					ConsoleUtil.log("Fired!");
 				} else {
@@ -157,15 +162,34 @@ class Player extends FlxSprite {
 				if (I.isActive) {
 					if (I.isWeapon) {
 						P.weapons.add(I);
+						selectedWeapon = P.weapons.members.lastIndexOf(I) + 1;
+						I.screenCenter();
+						if (selectedWeapon == 2) {
+							I.x += I.width;
+						}
+						I.y += 50;
+						I.scrollFactor.set(0, 0);
 					} else {
 						P.activeItems.add(I);
+						I.visible = false;
 					}
 				} else {
 					P.passiveItems.add(I);
+					I.visible = false;
 				}
-				I.visible = false;
-				I.reset(0, 0);
+				I.alive = false;
 			}
+		}
+	}
+
+	function selectWeapon():Void {
+		if (FlxG.keys.justPressed.ONE) {
+			selectedWeapon = 1;
+		} else if (FlxG.keys.justPressed.TWO) {
+			if (weapons.length == 1) {
+				return;
+			}
+			selectedWeapon = 2;
 		}
 	}
 }
