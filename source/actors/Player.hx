@@ -18,6 +18,7 @@ class Player extends FlxSprite {
 	public var goesDown:Bool;
 	public var goesLeft:Bool;
 	public var goesRight:Bool;
+	public var mA:Float;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
@@ -66,7 +67,7 @@ class Player extends FlxSprite {
 			goesLeft = goesRight = false;
 
 		if (goesLeft || goesRight || goesUp || goesDown) {
-			var mA:Float = 0;
+			mA = 0;
 			if (goesUp) {
 				mA = -90;
 				if (goesLeft)

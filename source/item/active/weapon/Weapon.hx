@@ -45,12 +45,17 @@ class Weapon extends ActiveItem {
 		var playState:PlayState = cast FlxG.state;
 
 		for (i in 0...bulletsToShoot.maxSize) {
+			var finalAngle:Float = P.mA;
 			var bullet:Projectile = playState._playerBullets.recycle();
 			bullet.speed = this.recoilForce;
 			bullet.damage = this.damage;
 			bullet.reset(P.x + P.width / 2, P.y);
-			bullet.move(P, typeOfShooting);
 
+			if (typeOfShooting == TypeOfShooting.SHOTGUN) {
+				finalAngle = -15 + finalAngle + (15 * i);
+			}
+
+			bullet.move(finalAngle, typeOfShooting);
 			bulletsToShoot.add(bullet);
 		}
 

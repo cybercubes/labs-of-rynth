@@ -2,8 +2,6 @@ package item.passive;
 
 import item.active.weapon.TypeOfShooting;
 import flixel.math.FlxPoint;
-import flixel.FlxObject;
-import actors.Player;
 import flixel.FlxG;
 import flixel.util.FlxColor;
 import flixel.util.helpers.FlxBounds;
@@ -36,28 +34,10 @@ class Projectile extends PassiveItem {
 		super.update(elapsed);
 	}
 
-	public function move(P:Player, typeOfShooting:String):Void {
+	public function move(angle:Float, typeOfShooting:String):Void {
 		var mA:Float = 0;
 
-		if (typeOfShooting == TypeOfShooting.STRAIGHT) {
-			if (P.facing == FlxObject.UP) {
-				mA = -90;
-				if (P.goesLeft)
-					mA -= 45;
-				else if (P.goesRight)
-					mA += 45;
-			} else if (P.facing == FlxObject.DOWN) {
-				mA = 90;
-				if (P.goesLeft)
-					mA += 45;
-				else if (P.goesRight)
-					mA -= 45;
-			} else if (P.facing == FlxObject.LEFT) {
-				mA = 180;
-			} else if (P.facing == FlxObject.RIGHT) {
-				mA = 0;
-			}
-		}
+		mA = angle;
 
 		this.velocity.set(this.speed, 0);
 		this.velocity.rotate(FlxPoint.weak(0, 0), mA);

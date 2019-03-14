@@ -59,7 +59,7 @@ class PlayState extends FlxState {
 		}
 		add(_player.healthBar);
 		// First we will instantiate the bullets you fire at your enemies.
-		var numPlayerBullets:Int = 10;
+		var numPlayerBullets:Int = 100;
 		// Initializing the array is very important and easy to forget!
 		_playerBullets = new FlxTypedGroup(numPlayerBullets);
 		var bullet:Projectile;
@@ -125,7 +125,7 @@ class PlayState extends FlxState {
 				case "elixir":
 					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 10, 0.1, 50, TypeOfShooting.STRAIGHT));
+					_grpItems.add(new Weapon(x, y, name, 10, 0.1, 50, TypeOfShooting.SHOTGUN));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
