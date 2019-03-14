@@ -1,22 +1,23 @@
 package item.passive;
 
+import item.active.weapon.TypeOfShooting;
+import flixel.math.FlxPoint;
 import flixel.FlxG;
 import flixel.util.FlxColor;
 import flixel.util.helpers.FlxBounds;
 import item.passive.PassiveItem;
 
 class Projectile extends PassiveItem {
-	public var flySpeed:Float;
-	public var damage:Int;
+	public var speed:Float;
 	public var lifespan:Float;
+	public var damage:Int;
 	public var size:FlxBounds<Int>;
 
-	public function new(Size:FlxBounds<Int>, FlySpeed:Float) {
+	public function new(Size:FlxBounds<Int>) {
 		super(0, 0);
 		// loadGraphic("assets/images/passive_items/projectile.png", false, 8, 8);
 		this.size = Size;
 		makeGraphic(Size.min, Size.max, FlxColor.RED);
-		this.flySpeed = FlySpeed;
 
 		exists = false;
 	}
@@ -29,6 +30,16 @@ class Projectile extends PassiveItem {
 				kill();
 			}
 		}
+
 		super.update(elapsed);
+	}
+
+	public function move(angle:Float, typeOfShooting:String):Void {
+		var mA:Float = 0;
+
+		mA = angle;
+
+		this.velocity.set(this.speed, 0);
+		this.velocity.rotate(FlxPoint.weak(0, 0), mA);
 	}
 }

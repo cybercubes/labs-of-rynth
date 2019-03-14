@@ -49,8 +49,6 @@ class PlayState extends FlxState
 		_monsterS = new FlxTypedGroup<Monster>();
 		_grpItems = new FlxTypedGroup<BaseItem>();
 		_player = new Player();
-
-		_playerBullets = new FlxTypedGroup<Projectile>();
 		_vsPlayerBullets = new FlxGroup();
 
 		_map.loadEntities(placeEntities, "entities");
@@ -66,7 +64,7 @@ class PlayState extends FlxState
 		add(_player.healthBar);
 
 		// First we will instantiate the bullets you fire at your enemies.
-		var numPlayerBullets:Int = 10;
+		var numPlayerBullets:Int = 100;
 		// Initializing the array is very important and easy to forget!
 		_playerBullets = new FlxTypedGroup(numPlayerBullets);
 		var bullet:Projectile;
@@ -74,7 +72,7 @@ class PlayState extends FlxState
 		// Create 10 bullets for the player to recycle
 		for (i in 0...numPlayerBullets) {
 			// Instantiate a new sprite offscreen
-			bullet = new Projectile(new FlxBounds<Int>(4, 4), 100);
+			bullet = new Projectile(new FlxBounds<Int>(4, 4));
 			// Add it to the group of player bullets
 			_playerBullets.add(bullet);
 		}
@@ -136,7 +134,7 @@ class PlayState extends FlxState
 				case "elixir":
 					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 25, 0.5, TypeOfShooting.STRAIGHT));
+					_grpItems.add(new Weapon(x, y, name, 10, 0.1, 50, TypeOfShooting.SHOTGUN));
 			}
 		}
 		else if (entityName == "monster")

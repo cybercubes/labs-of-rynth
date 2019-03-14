@@ -1,68 +1,65 @@
 package item.active.weapon;
 
-import flixel.system.debug.console.ConsoleUtil;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
-import flixel.math.FlxPoint;
-import flixel.FlxObject;
 import actors.Player;
 import item.passive.Projectile;
 
 class Weapon extends ActiveItem {
 	public var damage:Int;
 	public var speed:Float;
+	public var recoilForce:Float;
+	public var shotCooldown:Float;
 	public var typeOfShooting:String;
-	public var timeElapsedSinceLastUse:Float;
+	public var bulletsToShoot:FlxTypedGroup<Projectile>;
 
-	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, typeOfShooting:String) {
+	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, RecoilForce:Float, typeOfShooting:String) {
 		super(X, Y);
 		isWeapon = true;
 		name = Name;
 		loadGraphic("assets/images/active_items/weapons/" + name + ".png", false, 8, 8);
 		this.damage = Damage;
 		this.speed = Speed;
+		this.recoilForce = RecoilForce;
 		this.typeOfShooting = typeOfShooting;
+		switch (typeOfShooting) {
+			case TypeOfShooting.STRAIGHT:
+				bulletsToShoot = new FlxTypedGroup(1);
+			case TypeOfShooting.SHOTGUN:
+				bulletsToShoot = new FlxTypedGroup(3);
+		}
 	}
 
 	override public function update(elapsed:Float):Void {
-		if (timeElapsedSinceLastUse < speed) {
-			timeElapsedSinceLastUse += elapsed;
+		if (shotCooldown < speed) {
+			shotCooldown += elapsed;
 		}
-		ConsoleUtil.log(timeElapsedSinceLastUse);
 		super.update(elapsed);
 	}
 
 	override public function onUse(P:Player):Bool {
-		if (timeElapsedSinceLastUse < speed) {
+		if (shotCooldown < speed) {
 			return false;
 		}
+
 		var playState:PlayState = cast FlxG.state;
-		var bullet:Projectile = playState._playerBullets.recycle();
-		bullet.reset(P.x + P.width / 2 - bullet.width / 2, P.y);
-		bullet.damage = this.damage;
-		bullet.lifespan = 3;
-		var mA:Float = 0;
-		if (P.facing == FlxObject.UP) {
-			mA = -90;
-			if (P.goesLeft)
-				mA -= 45;
-			else if (P.goesRight)
-				mA += 45;
-		} else if (P.facing == FlxObject.DOWN) {
-			mA = 90;
-			if (P.goesLeft)
-				mA += 45;
-			else if (P.goesRight)
-				mA -= 45;
-		} else if (P.facing == FlxObject.LEFT) {
-			mA = 180;
-		} else if (P.facing == FlxObject.RIGHT) {
-			mA = 0;
+
+		for (i in 0...bulletsToShoot.maxSize) {
+			var finalAngle:Float = P.mA;
+			var bullet:Projectile = playState._playerBullets.recycle();
+			bullet.speed = this.recoilForce;
+			bullet.damage = this.damage;
+			bullet.reset(P.x + P.width / 2, P.y);
+
+			if (typeOfShooting == TypeOfShooting.SHOTGUN) {
+				finalAngle = -15 + finalAngle + (15 * i);
+			}
+
+			bullet.move(finalAngle, typeOfShooting);
+			bulletsToShoot.add(bullet);
 		}
 
-		bullet.velocity.set(bullet.flySpeed, 0);
-		bullet.velocity.rotate(FlxPoint.weak(0, 0), mA);
-
-		timeElapsedSinceLastUse = 0;
+		shotCooldown = 0;
 
 		return true;
 	}
