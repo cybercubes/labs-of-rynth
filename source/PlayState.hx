@@ -1,39 +1,42 @@
-package;
+package ;
 
-import actors.brain.Monster;
-import actors.Player;
 import flixel.util.FlxColor;
-import flixel.util.helpers.FlxBounds;
 import flixel.FlxState;
+import actors.brain.Monster;
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
 import flixel.FlxObject;
 import flixel.FlxG;
 import flixel.group.FlxGroup;
+import actors.Player;
 import item.BaseItem;
 import item.active.ConsumableItem;
 import item.active.weapon.Weapon;
 import item.active.weapon.TypeOfShooting;
+import flixel.util.helpers.FlxBounds;
+import flixel.math.FlxPoint;
 import item.passive.Projectile;
 
-class PlayState extends FlxState {
+class PlayState extends FlxState
+{
 	var _map:FlxOgmoLoader;
 	var _mWalls:FlxTilemap;
 	var _grpItems:FlxTypedGroup<BaseItem>;
-	var _monsterS:FlxTypedGroup<Monster>;
+  	var _monsterS:FlxTypedGroup<Monster>;
 	var _player:Player;
 
 	public var _playerBullets:FlxTypedGroup<Projectile>;
 
 	var _vsPlayerBullets:FlxGroup;
+
 	// Pause Menu States
 	var pauseSubState:PauseState;
-	var subStateColor:FlxColor = 0x99808080;
+	var subStateColor:FlxColor;
 
 	override public function create():Void {
 		super.create();
 
-		destroySubStates = false;
+		subStateColor = 0x99808080;
 
 		pauseSubState = new PauseState(subStateColor);
 
@@ -42,7 +45,7 @@ class PlayState extends FlxState {
 		_mWalls.follow();
 		_mWalls.setTileProperties(1, FlxObject.NONE);
 		_mWalls.setTileProperties(2, FlxObject.ANY);
-
+    
 		_monsterS = new FlxTypedGroup<Monster>();
 		_grpItems = new FlxTypedGroup<BaseItem>();
 		_player = new Player();
@@ -57,7 +60,9 @@ class PlayState extends FlxState {
 		for (monster in _monsterS) {
 			add(monster.healthBar);
 		}
+
 		add(_player.healthBar);
+
 		// First we will instantiate the bullets you fire at your enemies.
 		var numPlayerBullets:Int = 100;
 		// Initializing the array is very important and easy to forget!
@@ -83,28 +88,32 @@ class PlayState extends FlxState {
 
 		for (monster in _monsterS)//updates state of the monsters
 		{
-			monster.findPlayer(_player);
+			//monster.findPlayer(_player);
 		}
 
 		FlxG.collide(_player, _mWalls);
 		FlxG.collide(_monsterS, _mWalls);
 		FlxG.collide(_playerBullets, _mWalls, killBullet);
-		_monsterS.forEachAlive(checkEnemyVision);
+ 		_monsterS.forEachAlive(checkEnemyVision);
 
 		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
 		FlxG.overlap(_playerBullets, _vsPlayerBullets, hurt);
 
-		if (FlxG.keys.pressed.ESCAPE) openSubState(pauseSubState);
+		if (FlxG.keys.pressed.ESCAPE)   openSubState(pauseSubState);
 	}
-
-	function checkEnemyVision(e:Monster):Void {
-		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())) {
+  
+	function checkEnemyVision(e:Monster):Void
+	{
+		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint()))
+		{
 			e.seesPlayer = true;
 			e.playerPos.copyFrom(_player.getMidpoint());
 		}
-	}
+    
+ 	}
 
-	override public function destroy():Void {
+	override public function destroy():Void
+	{
 		super.destroy();
 
 		pauseSubState.destroy();
@@ -127,8 +136,10 @@ class PlayState extends FlxState {
 				case "pistol":
 					_grpItems.add(new Weapon(x, y, name, 10, 0.1, 50, TypeOfShooting.SHOTGUN));
 			}
-		} else if (entityName == "monster") {
-			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
+		}
+		else if (entityName == "monster")
+		{
+			 _monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
 		}
 	}
 
