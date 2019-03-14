@@ -9,7 +9,7 @@ class Weapon extends ActiveItem {
 	public var damage:Int;
 	public var speed:Float;
 	public var recoilForce:Float;
-	public var timeElapsedSinceLastUse:Float;
+	public var shotCooldown:Float;
 	public var typeOfShooting:String;
 	public var bulletsToShoot:FlxTypedGroup<Projectile>;
 
@@ -31,14 +31,14 @@ class Weapon extends ActiveItem {
 	}
 
 	override public function update(elapsed:Float):Void {
-		if (timeElapsedSinceLastUse < speed) {
-			timeElapsedSinceLastUse += elapsed;
+		if (shotCooldown < speed) {
+			shotCooldown += elapsed;
 		}
 		super.update(elapsed);
 	}
 
 	override public function onUse(P:Player):Bool {
-		if (timeElapsedSinceLastUse < speed) {
+		if (shotCooldown < speed) {
 			return false;
 		}
 
@@ -59,7 +59,7 @@ class Weapon extends ActiveItem {
 			bulletsToShoot.add(bullet);
 		}
 
-		timeElapsedSinceLastUse = 0;
+		shotCooldown = 0;
 
 		return true;
 	}
