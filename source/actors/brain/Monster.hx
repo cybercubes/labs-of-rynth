@@ -1,12 +1,12 @@
 package actors.brain;
 
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
+import item.passive.Projectile;
 import flixel.math.FlxVelocity;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.math.FlxPoint;
+import flixel.ui.FlxBar;
 import actors.brain.FSM;
 import actors.Player;
 import flixel.ui.FlxBar;
@@ -21,7 +21,7 @@ import flixel.ui.FlxBar;
    
     public var seesPlayer:Bool = false;
     public var playerPos(default, null):FlxPoint;
-    public var speed:Float = 100;
+    public var speed:Float = 50;
     
     public var Damage:Float;
     public var etype(default, null):Int;
@@ -98,13 +98,13 @@ import flixel.ui.FlxBar;
     	distance = Math.sqrt((cat2 *cat2) + (cat1 * cat1));
     }
 
-    public function takeDamage():Void
+    public function takeDamage(p:Projectile):Void
     {
-        this.health =  this.health - Damage;
+        this.hurt(p.damage);
 
         if (health <= 0)
         {
-            this.kill();
+            healthBar.kill();
         }
 
     }

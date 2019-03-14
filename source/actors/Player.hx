@@ -1,7 +1,5 @@
 package actors;
 
-import actors.brain.Monster;
-import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
@@ -10,13 +8,16 @@ import flixel.system.debug.console.ConsoleUtil;
 import flixel.ui.FlxBar;
 import item.BaseItem;
 
-
 class Player extends FlxSprite {
-	public var speed:Float = 100;
+	public var speed:Float = 125;
 	public var activeItems:List<BaseItem>;
 	public var passiveItems:List<BaseItem>;
 	public var weapons:List<BaseItem>;
 	public var healthBar:FlxBar;
+	public var goesUp:Bool;
+	public var goesDown:Bool;
+	public var goesLeft:Bool;
+	public var goesRight:Bool;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
@@ -49,41 +50,41 @@ class Player extends FlxSprite {
 	}
 
 	function movement():Void {
-		var _up:Bool = false;
-		var _down:Bool = false;
-		var _left:Bool = false;
-		var _right:Bool = false;
+		goesUp = false;
+		goesDown = false;
+		goesLeft = false;
+		goesRight = false;
 
-		_up = FlxG.keys.anyPressed([UP, W]);
-		_down = FlxG.keys.anyPressed([DOWN, S]);
-		_left = FlxG.keys.anyPressed([LEFT, A]);
-		_right = FlxG.keys.anyPressed([RIGHT, D]);
+		goesUp = FlxG.keys.anyPressed([UP, W]);
+		goesDown = FlxG.keys.anyPressed([DOWN, S]);
+		goesLeft = FlxG.keys.anyPressed([LEFT, A]);
+		goesRight = FlxG.keys.anyPressed([RIGHT, D]);
 
-		if (_up && _down)
-			_up = _down = false;
-		if (_left && _right)
-			_left = _right = false;
+		if (goesUp && goesDown)
+			goesUp = goesDown = false;
+		if (goesLeft && goesRight)
+			goesLeft = goesRight = false;
 
-		if (_left || _right || _up || _down) {
+		if (goesLeft || goesRight || goesUp || goesDown) {
 			var mA:Float = 0;
-			if (_up) {
+			if (goesUp) {
 				mA = -90;
-				if (_left)
+				if (goesLeft)
 					mA -= 45;
-				else if (_right)
+				else if (goesRight)
 					mA += 45;
 				facing = FlxObject.UP;
-			} else if (_down) {
+			} else if (goesDown) {
 				mA = 90;
-				if (_left)
+				if (goesLeft)
 					mA += 45;
-				else if (_right)
+				else if (goesRight)
 					mA -= 45;
 				facing = FlxObject.DOWN;
-			} else if (_left) {
+			} else if (goesLeft) {
 				mA = 180;
 				facing = FlxObject.LEFT;
-			} else if (_right) {
+			} else if (goesRight) {
 				mA = 0;
 				facing = FlxObject.RIGHT;
 			}
@@ -103,8 +104,8 @@ class Player extends FlxSprite {
 		}
 	}
 
+	// using an active item
 	function useActiveItem():Void {
-		// using an active item
 		if (FlxG.keys.justPressed.SPACE) {
 			if (activeItems.length > 0) {
 				var lastItem = activeItems.last();
@@ -115,8 +116,7 @@ class Player extends FlxSprite {
 		} else if (FlxG.keys.justPressed.Z) {
 			if (weapons.length > 0) {
 				var weapon = weapons.last();
-				var res = weapon.onUse(this);
-				if (res) {
+				if (weapon.onUse(this)) {
 					ConsoleUtil.log("Fired!");
 				} else {
 					ConsoleUtil.log("Not fired!");
@@ -150,7 +150,7 @@ class Player extends FlxSprite {
 			ConsoleUtil.log("Health: " + this.health);
 		}
 	}
-  
+
 	public function pickUpAnItem(P:Player, I:BaseItem):Void {
 		if (P.alive && P.exists && I.alive && I.exists) {
 			if (FlxG.keys.pressed.E) {
@@ -163,9 +163,9 @@ class Player extends FlxSprite {
 				} else {
 					P.passiveItems.add(I);
 				}
-				I.kill();
+				I.visible = false;
+				I.reset(0, 0);
 			}
 		}
 	}
 }
-
