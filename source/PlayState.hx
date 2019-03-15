@@ -14,7 +14,6 @@ import item.active.ConsumableItem;
 import item.active.weapon.Weapon;
 import item.active.weapon.TypeOfShooting;
 import flixel.util.helpers.FlxBounds;
-import flixel.math.FlxPoint;
 import item.passive.Projectile;
 
 class PlayState extends FlxState
@@ -134,7 +133,9 @@ class PlayState extends FlxState
 				case "elixir":
 					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 10, 0.1, 50, TypeOfShooting.SHOTGUN));
+					_grpItems.add(new Weapon(x, y, name, 10, 0.1, 100, TypeOfShooting.STRAIGHT));
+				case "shotgun":
+					_grpItems.add(new Weapon(x, y, name, 25, 1, 100, TypeOfShooting.SHOTGUN));
 			}
 		}
 		else if (entityName == "monster")
