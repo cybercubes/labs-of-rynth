@@ -21,7 +21,7 @@ class Player extends FlxSprite {
 	public var goesLeft:Bool;
 	public var goesRight:Bool;
 	public var mA:Float;
-	public var selectedWeapon:Int;
+	public var selectedWeapon:BaseItem;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
@@ -120,8 +120,7 @@ class Player extends FlxSprite {
 			}
 		} else if (FlxG.keys.justPressed.Z) {
 			if (weapons.length > 0) {
-				var weapon = weapons.members[selectedWeapon - 1];
-				if (weapon.onUse(this)) {
+				if (selectedWeapon.onUse(this)) {
 					ConsoleUtil.log("Fired!");
 				} else {
 					ConsoleUtil.log("Not fired!");
@@ -162,34 +161,27 @@ class Player extends FlxSprite {
 				if (I.isActive) {
 					if (I.isWeapon) {
 						P.weapons.add(I);
-						selectedWeapon = P.weapons.members.lastIndexOf(I) + 1;
-						I.screenCenter();
-						if (selectedWeapon == 2) {
-							I.x += I.width;
-						}
-						I.y += 50;
-						I.scrollFactor.set(0, 0);
+						selectedWeapon = I;
 					} else {
 						P.activeItems.add(I);
-						I.visible = false;
 					}
 				} else {
 					P.passiveItems.add(I);
-					I.visible = false;
 				}
 				I.alive = false;
+				I.visible = false;
 			}
 		}
 	}
 
 	function selectWeapon():Void {
 		if (FlxG.keys.justPressed.ONE) {
-			selectedWeapon = 1;
+			selectedWeapon = weapons.members[0];
 		} else if (FlxG.keys.justPressed.TWO) {
 			if (weapons.length == 1) {
 				return;
 			}
-			selectedWeapon = 2;
+			selectedWeapon = weapons.members[1];
 		}
 	}
 }
