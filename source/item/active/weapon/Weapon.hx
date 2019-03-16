@@ -1,7 +1,7 @@
 package item.active.weapon;
 
-import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
+import flixel.util.helpers.FlxBounds;
 import actors.Player;
 import item.passive.Projectile;
 
@@ -11,9 +11,11 @@ class Weapon extends ActiveItem {
 	public var recoilForce:Float;
 	public var shotCooldown:Float;
 	public var typeOfShooting:String;
-	public var bulletsToShoot:FlxTypedGroup<Projectile>;
+	public var bulletsToShoot:Int;
+	public var sizeOfBarrel:FlxBounds<Int>;
 
-	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, RecoilForce:Float, typeOfShooting:String) {
+	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, RecoilForce:Float, typeOfShooting:String, bulletsToShoot:Int,
+			SizeOfBarrel:FlxBounds<Int>) {
 		super(X, Y);
 		isWeapon = true;
 		name = Name;
@@ -22,12 +24,8 @@ class Weapon extends ActiveItem {
 		this.speed = Speed;
 		this.recoilForce = RecoilForce;
 		this.typeOfShooting = typeOfShooting;
-		switch (typeOfShooting) {
-			case TypeOfShooting.STRAIGHT:
-				bulletsToShoot = new FlxTypedGroup(1);
-			case TypeOfShooting.SHOTGUN:
-				bulletsToShoot = new FlxTypedGroup(3);
-		}
+		this.bulletsToShoot = bulletsToShoot;
+		this.sizeOfBarrel = SizeOfBarrel;
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -44,19 +42,22 @@ class Weapon extends ActiveItem {
 
 		var playState:PlayState = cast FlxG.state;
 
-		for (i in 0...bulletsToShoot.maxSize) {
+		for (i in 0...bulletsToShoot) {
 			var finalAngle:Float = P.mA;
 			var bullet:Projectile = playState._playerBullets.recycle();
 			bullet.speed = this.recoilForce;
 			bullet.damage = this.damage;
+			bullet.changeSize(this.sizeOfBarrel);
 			bullet.reset(P.x + P.width / 2, P.y);
 
-			if (typeOfShooting == TypeOfShooting.SHOTGUN) {
-				finalAngle = -15 + finalAngle + (15 * i);
+			switch (typeOfShooting) {
+				case TypeOfShooting.SHOTGUN:
+					finalAngle = (finalAngle - 45) + (90 / (bulletsToShoot - 1) * i);
+				case TypeOfShooting.STRAIGHT:
+					finalAngle = (360 / bulletsToShoot) * i + finalAngle;
 			}
 
-			bullet.move(finalAngle, typeOfShooting);
-			bulletsToShoot.add(bullet);
+			bullet.move(finalAngle);
 		}
 
 		shotCooldown = 0;
