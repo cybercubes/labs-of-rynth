@@ -14,7 +14,7 @@ class Weapon extends ActiveItem {
 	public var bulletsToShoot:Int;
 	public var sizeOfBarrel:FlxBounds<Int>;
 
-	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, RecoilForce:Float, typeOfShooting:String, BulletsToShoot:Int,
+	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, RecoilForce:Float, typeOfShooting:String, bulletsToShoot:Int,
 			SizeOfBarrel:FlxBounds<Int>) {
 		super(X, Y);
 		isWeapon = true;
@@ -24,7 +24,7 @@ class Weapon extends ActiveItem {
 		this.speed = Speed;
 		this.recoilForce = RecoilForce;
 		this.typeOfShooting = typeOfShooting;
-		this.bulletsToShoot = BulletsToShoot;
+		this.bulletsToShoot = bulletsToShoot;
 		this.sizeOfBarrel = SizeOfBarrel;
 	}
 
@@ -52,8 +52,9 @@ class Weapon extends ActiveItem {
 
 			switch (typeOfShooting) {
 				case TypeOfShooting.SHOTGUN:
-					finalAngle = -15 + finalAngle + (15 * i);
+					finalAngle = (finalAngle - 45) + (90 / (bulletsToShoot - 1) * i);
 				case TypeOfShooting.STRAIGHT:
+					finalAngle = (360 / bulletsToShoot) * i + finalAngle;
 			}
 
 			bullet.move(finalAngle);
