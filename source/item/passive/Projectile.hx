@@ -9,15 +9,13 @@ class Projectile extends PassiveItem {
 	public var speed:Float;
 	public var lifespan:Float;
 	public var damage:Int;
-	public var size:FlxBounds<Int>;
+	public var originalSize:FlxBounds<Int> = new FlxBounds<Int>(8, 8);
 
-	public function new(Size:FlxBounds<Int>) {
+	public function new() {
 		super(0, 0);
-		loadGraphic("assets/images/passive_items/projectile.png", false, 8, 8);
+		loadGraphic("assets/images/passive_items/projectile.png", false, originalSize.min, originalSize.max);
 		scale = new FlxPoint(0.5, 0.5);
 		updateHitbox();
-		this.size = Size;
-		// makeGraphic(Size.min, Size.max, FlxColor.RED);
 
 		exists = false;
 	}
@@ -34,12 +32,13 @@ class Projectile extends PassiveItem {
 		super.update(elapsed);
 	}
 
-	public function move(angle:Float, typeOfShooting:String):Void {
-		var mA:Float = 0;
-
-		mA = angle;
-
+	public function move(angle:Float):Void {
 		this.velocity.set(this.speed, 0);
-		this.velocity.rotate(FlxPoint.weak(0, 0), mA);
+		this.velocity.rotate(FlxPoint.weak(0, 0), angle);
+	}
+
+	public function changeSize(SizeOfBarrel:FlxBounds<Int>) {
+		scale = new FlxPoint(SizeOfBarrel.min / graphic.width, SizeOfBarrel.max / graphic.height);
+		updateHitbox();
 	}
 }
