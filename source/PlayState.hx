@@ -36,8 +36,8 @@ class PlayState extends FlxState {
 	override public function create():Void {
 		super.create();
 
+		destroySubStates = false;
 		subStateColor = 0x99808080;
-
 		pauseSubState = new PauseState(subStateColor);
 
 		_map = new FlxOgmoLoader(AssetPaths.room003__oel);
@@ -152,9 +152,9 @@ class PlayState extends FlxState {
 				case "elixir":
 					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 10, 0.1, 100, TypeOfShooting.STRAIGHT, 1, new FlxBounds<Int>(4, 4)));
+					_grpItems.add(new Weapon(x, y, name, 10, 0.1, 100, TypeOfShooting.STRAIGHT, 15, new FlxBounds<Int>(4, 4)));
 				case "shotgun":
-					_grpItems.add(new Weapon(x, y, name, 25, 1, 100, TypeOfShooting.SHOTGUN, 3, new FlxBounds<Int>(6, 6)));
+					_grpItems.add(new Weapon(x, y, name, 25, 0.1, 100, TypeOfShooting.SHOTGUN, 30, new FlxBounds<Int>(6, 6)));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
