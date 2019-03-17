@@ -1,13 +1,13 @@
 package item;
 
-import actors.Player;
+import actors.Actor;
 import flixel.FlxSprite;
 
 class BaseItem extends FlxSprite {
 	public var isActive:Bool;
 	public var isWeapon:Bool;
 	public var name:String;
-	public var owner:FlxSprite;
+	public var owner:Actor;
 
 	public function new(X:Float = 0, Y:Float = 0) {
 		super(X + 4, Y + 4);
@@ -17,7 +17,7 @@ class BaseItem extends FlxSprite {
 		super.update(elapsed);
 	}
 
-	public function onUse(P:Player):Bool {
+	public function onUse(actor:Actor):Bool {
 		return true;
 	}
 }

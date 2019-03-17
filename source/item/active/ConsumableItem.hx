@@ -1,6 +1,6 @@
 package item.active;
 
-import actors.Player;
+import actors.Actor;
 
 class ConsumableItem extends ActiveItem {
 	var healthToRestore:Int;
@@ -19,22 +19,22 @@ class ConsumableItem extends ActiveItem {
 		super.update(elapsed);
 	}
 
-	override public function onUse(P:Player):Bool {
-		var lastItem = P.activeItems.last();
-		P.activeItems.remove(lastItem);
+	override public function onUse(actor:Actor):Bool {
+		var lastItem = actor.activeItems.last();
+		actor.activeItems.remove(lastItem);
 
 		if (times > 1) {
 			var iteration = 0;
 			var timer = new haxe.Timer(2000); // 2000ms delay
 			timer.run = function() {
-				P.health = P.health + healthToRestore;
+				actor.health = actor.health + healthToRestore;
 				iteration += 1;
 				if (iteration == times) {
 					timer.stop();
 				}
 			}
 		} else {
-			P.health = P.health + healthToRestore;
+			actor.health = actor.health + healthToRestore;
 		}
 		return true;
 	}

@@ -1,5 +1,6 @@
 package;
 
+import actors.Actor;
 import flixel.util.FlxColor;
 import flixel.FlxState;
 import actors.brain.Monster;
@@ -21,11 +22,13 @@ class PlayState extends FlxState {
 	var _mWalls:FlxTilemap;
 	var _grpItems:FlxTypedGroup<BaseItem>;
 	var _monsterS:FlxTypedGroup<Monster>;
-	var _player:Player;
 
+	public var _player:Player;
 	public var _playerBullets:FlxTypedGroup<Projectile>;
+	public var _enemyBullets:FlxTypedGroup<Projectile>;
 
 	var _vsPlayerBullets:FlxGroup;
+	var _vsEnemyBullets:FlxGroup;
 	// Pause Menu States
 	var pauseSubState:PauseState;
 	var subStateColor:FlxColor;
@@ -47,6 +50,7 @@ class PlayState extends FlxState {
 		_grpItems = new FlxTypedGroup<BaseItem>();
 		_player = new Player();
 		_vsPlayerBullets = new FlxGroup();
+		_vsEnemyBullets = new FlxGroup();
 
 		_map.loadEntities(placeEntities, "entities");
 
@@ -56,12 +60,14 @@ class PlayState extends FlxState {
 		add(_monsterS);
 		for (monster in _monsterS) {
 			add(monster.healthBar);
+			add(monster.weapons);
 		}
 
 		add(_player.healthBar);
 
+		//
 		// First we will instantiate the bullets you fire at your enemies.
-		var numPlayerBullets:Int = 100;
+		var numPlayerBullets:Int = 50;
 		// Initializing the array is very important and easy to forget!
 		_playerBullets = new FlxTypedGroup(numPlayerBullets);
 		var bullet:Projectile;
@@ -76,6 +82,21 @@ class PlayState extends FlxState {
 
 		add(_playerBullets);
 		_vsPlayerBullets.add(_monsterS);
+		//
+
+		//
+		var numEnemyBullets:Int = 50;
+		_enemyBullets = new FlxTypedGroup(numEnemyBullets);
+		var bullet:Projectile;
+
+		for (i in 0...numEnemyBullets) {
+			bullet = new Projectile();
+			_enemyBullets.add(bullet);
+		}
+
+		add(_enemyBullets);
+		_vsEnemyBullets.add(_player);
+		//
 
 		FlxG.camera.follow(_player, TOPDOWN, 1);
 	}
@@ -91,10 +112,13 @@ class PlayState extends FlxState {
 		FlxG.collide(_player, _mWalls);
 		FlxG.collide(_monsterS, _mWalls);
 		FlxG.collide(_playerBullets, _mWalls, killBullet);
+		FlxG.collide(_enemyBullets, _mWalls, killBullet);
+
 		_monsterS.forEachAlive(checkEnemyVision);
 
 		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
 		FlxG.overlap(_playerBullets, _vsPlayerBullets, hurt);
+		FlxG.overlap(_enemyBullets, _vsEnemyBullets, hurt);
 
 		if (FlxG.keys.pressed.ESCAPE)
 			openSubState(pauseSubState);
@@ -137,7 +161,7 @@ class PlayState extends FlxState {
 		}
 	}
 
-	function hurt(Object1:Projectile, Object2:Monster):Void {
+	function hurt(Object1:Projectile, Object2:Actor):Void {
 		Object1.kill();
 		Object2.takeDamage(Object1);
 	}
