@@ -1,6 +1,6 @@
 package item.active;
 
-import actors.Player;
+import actors.Actor;
 
 class ActiveItem extends BaseItem {
 
@@ -13,7 +13,7 @@ class ActiveItem extends BaseItem {
 		super.update(elapsed);
 	}
 
-	override public function onUse(P:Player):Bool {
+	override public function onUse(actor:Actor):Bool {
 		return true;
 	}
 }

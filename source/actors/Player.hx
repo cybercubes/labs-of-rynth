@@ -1,38 +1,20 @@
 package actors;
 
-import flixel.util.FlxAxes;
-import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
 import flixel.system.debug.console.ConsoleUtil;
-import flixel.ui.FlxBar;
-import flixel.group.FlxGroup.FlxTypedGroup;
 import item.BaseItem;
 
-class Player extends FlxSprite {
-	public var speed:Float = 125;
-	public var activeItems:List<BaseItem>;
-	public var passiveItems:List<BaseItem>;
-	public var weapons:FlxTypedGroup<BaseItem>;
-	public var healthBar:FlxBar;
-	public var goesUp:Bool;
-	public var goesDown:Bool;
-	public var goesLeft:Bool;
-	public var goesRight:Bool;
-	public var mA:Float;
-	public var selectedWeapon:BaseItem;
-
+class Player extends Actor {
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
+		isPlayer = true;
+		speed = 150;
 
 		health = 20;
-		healthBar = new FlxBar(16, 64, FlxBarFillDirection.LEFT_TO_RIGHT, 32, 4, this, "health");
-		healthBar.trackParent(-7, -8);
 
 		loadGraphic(AssetPaths.player__png, true, 16, 16);
-		setFacingFlip(FlxObject.LEFT, false, false);
-		setFacingFlip(FlxObject.RIGHT, true, false);
 
 		animation.add("lr", [3, 4, 3, 5], 6, false);
 		animation.add("u", [6, 7, 6, 8], 6, false);
@@ -41,10 +23,6 @@ class Player extends FlxSprite {
 		drag.x = drag.y = 2400; // drag is a value that determines how quickly the body will slowdown
 		setSize(8, 14);
 		offset.set(4, 2);
-
-		activeItems = new List<BaseItem>();
-		passiveItems = new List<BaseItem>();
-		weapons = new FlxTypedGroup<BaseItem>();
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -160,13 +138,13 @@ class Player extends FlxSprite {
 			if (FlxG.keys.pressed.E) {
 				if (I.isActive) {
 					if (I.isWeapon) {
-						P.weapons.add(I);
+						weapons.add(I);
 						selectedWeapon = I;
 					} else {
-						P.activeItems.add(I);
+						activeItems.add(I);
 					}
 				} else {
-					P.passiveItems.add(I);
+					passiveItems.add(I);
 				}
 				I.alive = false;
 				I.visible = false;

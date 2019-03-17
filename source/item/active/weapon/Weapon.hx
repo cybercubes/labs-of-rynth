@@ -1,8 +1,10 @@
 package item.active.weapon;
 
+import flixel.math.FlxAngle;
+import flixel.system.debug.console.ConsoleUtil;
+import actors.Actor;
 import flixel.FlxG;
 import flixel.util.helpers.FlxBounds;
-import actors.Player;
 import item.passive.Projectile;
 
 class Weapon extends ActiveItem {
@@ -35,7 +37,7 @@ class Weapon extends ActiveItem {
 		super.update(elapsed);
 	}
 
-	override public function onUse(P:Player):Bool {
+	override public function onUse(actor:Actor):Bool {
 		if (shotCooldown < speed) {
 			return false;
 		}
@@ -43,12 +45,21 @@ class Weapon extends ActiveItem {
 		var playState:PlayState = cast FlxG.state;
 
 		for (i in 0...bulletsToShoot) {
-			var finalAngle:Float = P.mA;
-			var bullet:Projectile = playState._playerBullets.recycle();
+			var bullet:Projectile;
+			var finalAngle:Float;
+
+			if (actor.isPlayer) {
+				bullet = playState._playerBullets.recycle();
+				finalAngle = actor.mA;
+			} else {
+				bullet = playState._enemyBullets.recycle();
+				finalAngle = FlxAngle.angleBetween(actor, playState._player, true);
+			}
+
 			bullet.speed = this.recoilForce;
 			bullet.damage = this.damage;
 			bullet.changeSize(this.sizeOfBarrel);
-			bullet.reset(P.x + P.width / 2, P.y);
+			bullet.reset(actor.x + actor.width / 2, actor.y);
 
 			switch (typeOfShooting) {
 				case TypeOfShooting.SHOTGUN:
