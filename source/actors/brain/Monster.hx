@@ -1,5 +1,6 @@
 package actors.brain;
 
+import flixel.tile.FlxTilemap;
 import item.active.weapon.TypeOfShooting;
 import item.active.weapon.Weapon;
 import flixel.math.FlxVelocity;
@@ -17,6 +18,7 @@ class Monster extends Actor {
 	private var _idleTmr:Float;
 	private var _moveDir:Float;
 
+	public var attackBegin:Bool = false;
 	public var seesPlayer:Bool = false;
 	public var playerPos(default, null):FlxPoint;
 	public var etype(default, null):Int;
@@ -32,7 +34,7 @@ class Monster extends Actor {
 		animation.add("lr", [3, 4, 3, 5], 6, false);
 		animation.add("u", [6, 7, 6, 8], 6, false);
 
-		speed = 10;
+		speed = 50;
 
 		health = 100;
 
@@ -114,6 +116,40 @@ class Monster extends Actor {
 		}
 	}
 
+	public function findPathToPlayer(walls:FlxTilemap, p:Player):Void{
+		var rowAngle:Float = mA - 90;
+		var firstPoint:FlxPoint = new FlxPoint(0,0);
+		var childPoint:FlxPoint = new FlxPoint(0,0);
+		var interval:Float = 15;
+		var numberOfPoints:Int = 6;
+		var dX:Float = interval * Math.sin(90 - rowAngle);
+		var dY:Float = interval * Math.sin(rowAngle);
+
+		firstPoint.x = 0;//(numberOfPoints / 2 * dX) + (_player.x * (Math.abs(Math.cos(e.mA)) / Math.cos(e.mA)));
+		firstPoint.y = 0;//(numberOfPoints / 2 * dY) + (_player.y * (Math.abs(Math.sin(e.mA)) / Math.sin(e.mA)));
+
+		for (i in 1...numberOfPoints){
+			if (i == 1){
+				if(walls.ray(this.getMidpoint(), firstPoint)){
+					if(walls.ray(firstPoint, p.getMidpoint())){
+						FlxVelocity.moveTowardsPoint(this, firstPoint, Std.int(speed));
+						break;
+					}
+				}
+			}else{
+				childPoint.x = 0;//firstPoint.x * (dX * (Math.abs(Math.cos(e.mA)) / Math.cos(e.mA)) * i);
+				childPoint.y = 0;//firstPoint.y * (dY * (Math.abs(Math.sin(e.mA)) / Math.sin(e.mA)) * i);
+
+				if(walls.ray(this.getMidpoint(), childPoint)){
+					if(walls.ray(childPoint, p.getMidpoint())){
+						FlxVelocity.moveTowardsPoint(this, childPoint, Std.int(speed));
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	override public function update(elapsed:Float):Void {
 		attack();
 		super.update(elapsed);
@@ -121,7 +157,7 @@ class Monster extends Actor {
 	}
 
 	function attack():Void {
-		if (seesPlayer) {
+		if (attackBegin) {
 			selectedWeapon.onUse(this);
 		}
 	}

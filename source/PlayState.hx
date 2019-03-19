@@ -1,5 +1,7 @@
 package;
 
+import flixel.math.FlxVelocity;
+import flixel.math.FlxPoint;
 import actors.Actor;
 import flixel.util.FlxColor;
 import flixel.FlxState;
@@ -108,7 +110,7 @@ class PlayState extends FlxState {
 		{
 			// monster.findPlayer(_player);
 		}
-
+		//FlxG.collide(_monsterS, _monsterS);
 		FlxG.collide(_player, _mWalls);
 		FlxG.collide(_monsterS, _mWalls);
 		FlxG.collide(_playerBullets, _mWalls, killBullet);
@@ -125,12 +127,17 @@ class PlayState extends FlxState {
 	}
 
 	function checkEnemyVision(e:Monster):Void {
+		e.playerPos.copyFrom(_player.getMidpoint());
 		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())) {
 			e.seesPlayer = true;
-			e.playerPos.copyFrom(_player.getMidpoint());
+			e.attackBegin = true;
+		}else{
+			e.findPathToPlayer(_mWalls, _player);
+			e.seesPlayer = false;
+			e.attackBegin = false;
 		}
 	}
-
+	
 	override public function destroy():Void {
 		super.destroy();
 
