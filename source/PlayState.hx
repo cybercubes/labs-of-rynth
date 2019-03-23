@@ -18,6 +18,8 @@ import item.active.weapon.Weapon;
 import item.active.weapon.TypeOfShooting;
 import flixel.util.helpers.FlxBounds;
 import item.passive.Projectile;
+import flixel.math.FlxAngle;
+import utils.MathUtils;
 
 class PlayState extends FlxState {
 	var _map:FlxOgmoLoader;
@@ -42,7 +44,7 @@ class PlayState extends FlxState {
 		subStateColor = 0x99808080;
 		pauseSubState = new PauseState(subStateColor);
 
-		_map = new FlxOgmoLoader(AssetPaths.room003__oel);
+		_map = new FlxOgmoLoader(AssetPaths.room001__oel);
 		_mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
 		_mWalls.follow();
 		_mWalls.setTileProperties(1, FlxObject.NONE);
