@@ -122,7 +122,7 @@ class Player extends Actor {
 			} else {
 				ConsoleUtil.log("No active items to use!");
 			}
-		} else if (FlxG.keys.justPressed.Z) {
+		} else if (FlxG.mouse.pressed) {
 			if (weapons.length > 0) {
 				if (selectedWeapon.onUse(this)) {
 					ConsoleUtil.log("Fired!");
