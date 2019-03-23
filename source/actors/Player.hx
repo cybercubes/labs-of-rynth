@@ -1,5 +1,7 @@
 package actors;
 
+import item.passive.Projectile;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
@@ -10,9 +12,9 @@ class Player extends Actor {
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
 		isPlayer = true;
-		speed = 150;
+		health = 100;
 
-		health = 20;
+		speed = 150;
 
 		loadGraphic(AssetPaths.player__png, true, 16, 16);
 
@@ -23,13 +25,37 @@ class Player extends Actor {
 		drag.x = drag.y = 2400; // drag is a value that determines how quickly the body will slowdown
 		setSize(8, 14);
 		offset.set(4, 2);
+
+		bullets = new FlxTypedGroup(50);
+		var bullet:Projectile;
+
+		// Create 10 bullets for the player to recycle
+		for (i in 0...bullets.maxSize) {
+			// Instantiate a new sprite offscreen
+			bullet = new Projectile();
+			// Add it to the group of player bullets
+			bullets.add(bullet);
+		}
 	}
 
 	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
+
 		movement();
 		useActiveItem();
 		selectWeapon();
-		super.update(elapsed);
+
+		if (FlxG.keys.justPressed.E) {
+			for (item in playState._grpItems) {
+				if (FlxG.overlap(this, item)) {
+					ConsoleUtil.log("Overlaped with: " + item.name);
+					if (item.isPickable()) {
+						pickUpAnItem(item);
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	function movement():Void {
@@ -133,21 +159,32 @@ class Player extends Actor {
 		}
 	}
 
-	public function pickUpAnItem(P:Player, I:BaseItem):Void {
-		if (P.alive && P.exists && I.alive && I.exists) {
-			if (FlxG.keys.pressed.E) {
-				if (I.isActive) {
-					if (I.isWeapon) {
-						weapons.add(I);
-						selectedWeapon = I;
+	function pickUpAnItem(I:BaseItem):Void {
+		if (exists && alive) {
+			I.alive = false;
+			I.visible = false;
+			I.setPosition(0, 0);
+			I.owner = this;
+			if (I.isActive) {
+				if (I.isWeapon) {
+					if (weapons.members.length == weapons.maxSize) {
+						ConsoleUtil.log("DROP: " + selectedWeapon.name);
+
+						selectedWeapon.alive = true;
+						selectedWeapon.visible = true;
+						selectedWeapon.setPosition(x, y);
+
+						var indexOfSelectedWeapon = weapons.members.indexOf(selectedWeapon);
+						weapons.members[indexOfSelectedWeapon] = I;
 					} else {
-						activeItems.add(I);
+						weapons.add(I);
 					}
+					selectedWeapon = I;
 				} else {
-					passiveItems.add(I);
+					activeItems.add(I);
 				}
-				I.alive = false;
-				I.visible = false;
+			} else {
+				passiveItems.add(I);
 			}
 		}
 	}
