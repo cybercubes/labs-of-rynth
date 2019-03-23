@@ -1,5 +1,7 @@
 package actors.brain;
 
+import item.passive.Projectile;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import item.active.weapon.TypeOfShooting;
 import item.active.weapon.Weapon;
 import flixel.math.FlxVelocity;
@@ -45,11 +47,23 @@ class Monster extends Actor {
 		_idleTmr = 0;
 		playerPos = FlxPoint.get();
 
-		var weapon = new Weapon(x, y, "shotgun", 10, 1, 75, TypeOfShooting.SHOTGUN, 3, new FlxBounds<Int>(4, 4));
+		var weapon = new Weapon(x, y, "pistol", 50, 0.5, 70, TypeOfShooting.STRAIGHT, 1, new FlxBounds<Float>(6, 6));
 		weapon.visible = false;
 		weapon.alive = false;
+		weapon.owner = this;
 		weapons.add(weapon);
 		selectedWeapon = weapons.members[0];
+
+		bullets = new FlxTypedGroup(50);
+		var bullet:Projectile;
+
+		// Create 10 bullets for the player to recycle
+		for (i in 0...bullets.maxSize) {
+			// Instantiate a new sprite offscreen
+			bullet = new Projectile();
+			// Add it to the group of player bullets
+			bullets.add(bullet);
+		}
 	}
 
 	override public function draw():Void {
@@ -115,9 +129,10 @@ class Monster extends Actor {
 	}
 
 	override public function update(elapsed:Float):Void {
-		attack();
 		super.update(elapsed);
 		_brain.update();
+
+		attack();
 	}
 
 	function attack():Void {

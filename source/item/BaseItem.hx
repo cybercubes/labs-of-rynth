@@ -20,4 +20,12 @@ class BaseItem extends FlxSprite {
 	public function onUse(actor:Actor):Bool {
 		return true;
 	}
+
+	public function isPickable():Bool {
+		if (alive) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
