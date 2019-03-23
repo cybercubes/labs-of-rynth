@@ -113,4 +113,5 @@ class PlayState extends FlxState {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
 		}
 	}
+          
 }
