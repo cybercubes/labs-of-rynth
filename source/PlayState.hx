@@ -28,8 +28,13 @@ class PlayState extends FlxState {
 	var gameOverState:GameOverState;
 	var pauseSubStateColor:FlxColor;
 
+	var _hud:InGameHud;
+
 	override public function create():Void {
 		super.create();
+
+		_hud = new InGameHud();
+		add(_hud);
 
 		destroySubStates = false;
 		pauseSubStateColor = 0x99808080;

@@ -1,5 +1,6 @@
 package actors;
 
+import flixel.ui.FlxBar;
 import item.passive.Projectile;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
@@ -9,10 +10,15 @@ import flixel.system.debug.console.ConsoleUtil;
 import item.BaseItem;
 
 class Player extends Actor {
+	var hud:InGameHud;
+
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
 		isPlayer = true;
 		health = 100;
+
+		healthBar = new FlxBar(2, 2, FlxBarFillDirection.LEFT_TO_RIGHT, 50, 6, this, "health");
+		healthBar.scrollFactor.set(0,0);
 
 		speed = 150;
 
