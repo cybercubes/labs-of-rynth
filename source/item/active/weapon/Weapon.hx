@@ -1,7 +1,6 @@
 package item.active.weapon;
 
 import flixel.math.FlxAngle;
-import flixel.system.debug.console.ConsoleUtil;
 import actors.Actor;
 import flixel.FlxG;
 import flixel.util.helpers.FlxBounds;
@@ -14,10 +13,11 @@ class Weapon extends ActiveItem {
 	public var shotCooldown:Float;
 	public var typeOfShooting:String;
 	public var bulletsToShoot:Int;
-	public var sizeOfBarrel:FlxBounds<Int>;
+	public var sizeOfBarrel:FlxBounds<Float>;
 
-	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, recoilForce:Float, typeOfShooting:String, bulletsToShoot:Int,
-			SizeOfBarrel:FlxBounds<Int>) {
+	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, RecoilForce:Float, typeOfShooting:String, bulletsToShoot:Int,
+			SizeOfBarrel:FlxBounds<Float>) {
+
 		super(X, Y);
 		isWeapon = true;
 		name = Name;
@@ -31,10 +31,11 @@ class Weapon extends ActiveItem {
 	}
 
 	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
+
 		if (shotCooldown < speed) {
 			shotCooldown += elapsed;
 		}
-		super.update(elapsed);
 	}
 
 	override public function onUse(actor:Actor):Bool {
@@ -47,19 +48,22 @@ class Weapon extends ActiveItem {
 		for (i in 0...bulletsToShoot) {
 			var bullet:Projectile;
 			var finalAngle:Float;
+			bullet = actor.bullets.recycle();
 
 			if (actor.isPlayer) {
-				bullet = playState._playerBullets.recycle();
-				finalAngle = actor.mA;
+				finalAngle = FlxAngle.angleBetweenMouse(actor, true);
 			} else {
-				bullet = playState._enemyBullets.recycle();
 				finalAngle = FlxAngle.angleBetween(actor, playState._player, true);
 			}
 
-			bullet.speed = this.recoilForce;
-			bullet.damage = this.damage;
-			bullet.changeSize(this.sizeOfBarrel);
+			bullet.speed = recoilForce;
+			bullet.damage = damage;
+			// bullet.angleOffset = 45;
+			if (!bullet.size.equals(sizeOfBarrel)) {
+				bullet.changeSize(sizeOfBarrel);
+			}
 			bullet.reset(actor.x + actor.width / 2, actor.y);
+			bullet.owner = owner;
 
 			switch (typeOfShooting) {
 				case TypeOfShooting.SHOTGUN:

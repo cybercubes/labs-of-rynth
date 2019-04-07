@@ -23,28 +23,27 @@ import utils.MathUtils;
 
 class PlayState extends FlxState {
 	var _map:FlxOgmoLoader;
-	var _mWalls:FlxTilemap;
-	var _grpItems:FlxTypedGroup<BaseItem>;
-	var _monsterS:FlxTypedGroup<Monster>;
 
+	public var _mWalls:FlxTilemap;
+	public var _grpItems:FlxTypedGroup<BaseItem>;
+	public var _monsterS:FlxTypedGroup<Monster>;
 	public var _player:Player;
-	public var _playerBullets:FlxTypedGroup<Projectile>;
-	public var _enemyBullets:FlxTypedGroup<Projectile>;
 
-	var _vsPlayerBullets:FlxGroup;
-	var _vsEnemyBullets:FlxGroup;
-	// Pause Menu States
+	//SubStates
 	var pauseSubState:PauseState;
-	var subStateColor:FlxColor;
+	var gameOverState:GameOverState;
+	var pauseSubStateColor:FlxColor;
 
 	override public function create():Void {
 		super.create();
 
 		destroySubStates = false;
-		subStateColor = 0x99808080;
-		pauseSubState = new PauseState(subStateColor);
+		pauseSubStateColor = 0x99808080;
+		pauseSubState = new PauseState(pauseSubStateColor);
+		gameOverState = new GameOverState();
+    
+		_map = new FlxOgmoLoader(AssetPaths.room002__oel);
 
-		_map = new FlxOgmoLoader(AssetPaths.room001__oel);
 		_mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
 		_mWalls.follow();
 		_mWalls.setTileProperties(1, FlxObject.NONE);
@@ -53,54 +52,20 @@ class PlayState extends FlxState {
 		_monsterS = new FlxTypedGroup<Monster>();
 		_grpItems = new FlxTypedGroup<BaseItem>();
 		_player = new Player();
-		_vsPlayerBullets = new FlxGroup();
-		_vsEnemyBullets = new FlxGroup();
-
 		_map.loadEntities(placeEntities, "entities");
 
 		add(_mWalls);
 		add(_grpItems);
 		add(_player);
+		add(_player.healthBar);
+		add(_player.bullets);
+
 		add(_monsterS);
 		for (monster in _monsterS) {
 			add(monster.healthBar);
 			add(monster.weapons);
+			add(monster.bullets);
 		}
-
-		add(_player.healthBar);
-
-		//
-		// First we will instantiate the bullets you fire at your enemies.
-		var numPlayerBullets:Int = 50;
-		// Initializing the array is very important and easy to forget!
-		_playerBullets = new FlxTypedGroup(numPlayerBullets);
-		var bullet:Projectile;
-
-		// Create 10 bullets for the player to recycle
-		for (i in 0...numPlayerBullets) {
-			// Instantiate a new sprite offscreen
-			bullet = new Projectile();
-			// Add it to the group of player bullets
-			_playerBullets.add(bullet);
-		}
-
-		add(_playerBullets);
-		_vsPlayerBullets.add(_monsterS);
-		//
-
-		//
-		var numEnemyBullets:Int = 50;
-		_enemyBullets = new FlxTypedGroup(numEnemyBullets);
-		var bullet:Projectile;
-
-		for (i in 0...numEnemyBullets) {
-			bullet = new Projectile();
-			_enemyBullets.add(bullet);
-		}
-
-		add(_enemyBullets);
-		_vsEnemyBullets.add(_player);
-		//
 
 		FlxG.camera.follow(_player, TOPDOWN, 1);
 	}
@@ -120,12 +85,11 @@ class PlayState extends FlxState {
 
 		_monsterS.forEachAlive(checkEnemyVision);
 
-		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
-		FlxG.overlap(_playerBullets, _vsPlayerBullets, hurt);
-		FlxG.overlap(_enemyBullets, _vsEnemyBullets, hurt);
-
 		if (FlxG.keys.pressed.ESCAPE)
 			openSubState(pauseSubState);
+
+		if (_player.alive == false)
+			openSubState(gameOverState);
 	}
 
 	function checkEnemyVision(e:Monster):Void {
@@ -145,6 +109,8 @@ class PlayState extends FlxState {
 
 		pauseSubState.destroy();
 		pauseSubState = null;
+		gameOverState.destroy();
+		gameOverState = null;
 	}
 
 	function placeEntities(entityName:String, entityData:Xml):Void {
@@ -161,21 +127,15 @@ class PlayState extends FlxState {
 				case "elixir":
 					_grpItems.add(new ConsumableItem(x, y, name, 20));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 10, 0.1, 100, TypeOfShooting.STRAIGHT, 15, new FlxBounds<Int>(4, 4)));
+					_grpItems.add(new Weapon(x, y, name, 2, 0.5, 70, TypeOfShooting.STRAIGHT, 1, new FlxBounds<Float>(4, 4)));
 				case "shotgun":
-					_grpItems.add(new Weapon(x, y, name, 25, 0.1, 100, TypeOfShooting.SHOTGUN, 30, new FlxBounds<Int>(6, 6)));
+					_grpItems.add(new Weapon(x, y, name, 25, 1, 70, TypeOfShooting.SHOTGUN, 4, new FlxBounds<Float>(4, 4)));
+				case "wand":
+					_grpItems.add(new Weapon(x, y, name, 10, 0.5, 70, TypeOfShooting.STRAIGHT, 15, new FlxBounds<Float>(6, 6)));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
 		}
 	}
-
-	function hurt(Object1:Projectile, Object2:Actor):Void {
-		Object1.kill();
-		Object2.takeDamage(Object1);
-	}
-
-	function killBullet(Object1:FlxObject, Object2:FlxObject):Void {
-		Object1.kill();
-	}
+          
 }
