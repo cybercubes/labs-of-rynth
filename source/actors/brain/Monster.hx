@@ -26,7 +26,6 @@ class Monster extends Actor {
 	public var etype(default, null):Int;
 
 	public var distance:Float; // distance between monster and player
-	var playState:PlayState = cast FlxG.state;
 
 	public function new(?X:Float = 0, ?Y:Float = 0, EType:Int) {
 		super(X, Y);

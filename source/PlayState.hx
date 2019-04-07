@@ -28,12 +28,6 @@ class PlayState extends FlxState {
 	public var _grpItems:FlxTypedGroup<BaseItem>;
 	public var _monsterS:FlxTypedGroup<Monster>;
 
-	var _map:FlxOgmoLoader;
-
-
-	public var _mWalls:FlxTilemap;
-	public var _grpItems:FlxTypedGroup<BaseItem>;
-	public var _monsterS:FlxTypedGroup<Monster>;
 	public var _player:Player;
 
 	//SubStates
@@ -84,11 +78,6 @@ class PlayState extends FlxState {
 		{
 			// monster.findPlayer(_player);
 		}
-		//FlxG.collide(_monsterS, _monsterS);
-		FlxG.collide(_player, _mWalls);
-		FlxG.collide(_monsterS, _mWalls);
-		FlxG.collide(_playerBullets, _mWalls, killBullet);
-		FlxG.collide(_enemyBullets, _mWalls, killBullet);
 
 		_monsterS.forEachAlive(checkEnemyVision);
 

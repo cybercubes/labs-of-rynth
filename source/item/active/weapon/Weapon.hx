@@ -15,19 +15,19 @@ class Weapon extends ActiveItem {
 	public var bulletsToShoot:Int;
 	public var sizeOfBarrel:FlxBounds<Float>;
 
-	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, RecoilForce:Float, typeOfShooting:String, bulletsToShoot:Int,
-			SizeOfBarrel:FlxBounds<Float>) {
+	public function new(X:Float = 0, Y:Float = 0, name:String, damage:Int, speed:Float, recoilForce:Float, typeOfShooting:String, bulletsToShoot:Int,
+			sizeOfBarrel:FlxBounds<Float>) {
 
 		super(X, Y);
 		isWeapon = true;
-		name = Name;
+		this.name = name;
 		loadGraphic("assets/images/active_items/weapons/" + name + ".png", false, 8, 8);
-		this.damage = Damage;
-		this.speed = Speed;
+		this.damage = damage;
+		this.speed = speed;
 		this.recoilForce = recoilForce;
 		this.typeOfShooting = typeOfShooting;
 		this.bulletsToShoot = bulletsToShoot;
-		this.sizeOfBarrel = SizeOfBarrel;
+		this.sizeOfBarrel = sizeOfBarrel;
 	}
 
 	override public function update(elapsed:Float):Void {
