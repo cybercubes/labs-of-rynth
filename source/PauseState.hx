@@ -28,7 +28,7 @@ class PauseState extends FlxSubState
 
     function clickresume():Void
     {
-        FlxG.switchState(new PlayState());
+        close();
     }
 
     function clickmain():Void

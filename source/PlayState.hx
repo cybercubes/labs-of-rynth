@@ -1,7 +1,10 @@
-package ;
+package;
 
+import flixel.math.FlxVelocity;
+import flixel.math.FlxPoint;
+import actors.Actor;
+import flixel.util.FlxColor;
 import flixel.FlxState;
-import actors.Player;
 import actors.brain.Monster;
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.ogmo.FlxOgmoLoader;
@@ -10,39 +13,60 @@ import flixel.FlxG;
 import flixel.group.FlxGroup;
 import actors.Player;
 import item.BaseItem;
-import item.passive.PassiveItem;
-import item.active.consumable.Food;
-import item.active.consumable.Elixir;
+import item.active.ConsumableItem;
+import item.active.weapon.Weapon;
+import item.active.weapon.TypeOfShooting;
+import flixel.util.helpers.FlxBounds;
+import item.passive.Projectile;
+import flixel.math.FlxAngle;
+import utils.MathUtils;
 
-class PlayState extends FlxState
-{
-	var _map:FlxOgmoLoader;
-	var _mWalls:FlxTilemap;
-	var _grpItems:FlxTypedGroup<BaseItem>;
-  	var _monsterS:FlxTypedGroup<Monster>;
-	var _player:Player;
+class PlayState extends FlxState {
 
+	public var _map:FlxOgmoLoader;
+	public var _mWalls:FlxTilemap;
+	public var _grpItems:FlxTypedGroup<BaseItem>;
+	public var _monsterS:FlxTypedGroup<Monster>;
+
+	public var _player:Player;
+
+	//SubStates
+	var pauseSubState:PauseState;
+	var gameOverState:GameOverState;
+	var pauseSubStateColor:FlxColor;
 
 	override public function create():Void {
 		super.create();
 
-		_map = new FlxOgmoLoader(AssetPaths.room003__oel);
+		destroySubStates = false;
+		pauseSubStateColor = 0x99808080;
+		pauseSubState = new PauseState(pauseSubStateColor);
+		gameOverState = new GameOverState();
+    
+		_map = new FlxOgmoLoader(AssetPaths.room002__oel);
+
 		_mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
 		_mWalls.follow();
 		_mWalls.setTileProperties(1, FlxObject.NONE);
 		_mWalls.setTileProperties(2, FlxObject.ANY);
-    
+
 		_monsterS = new FlxTypedGroup<Monster>();
 		_grpItems = new FlxTypedGroup<BaseItem>();
 		_player = new Player();
-
 		_map.loadEntities(placeEntities, "entities");
 
 		add(_mWalls);
 		add(_grpItems);
 		add(_player);
-		add(_monsterS);
 		add(_player.healthBar);
+		add(_player.bullets);
+
+		add(_monsterS);
+		for (monster in _monsterS) {
+			add(monster.healthBar);
+			add(monster.weapons);
+			add(monster.bullets);
+		}
 
 		FlxG.camera.follow(_player, TOPDOWN, 1);
 	}
@@ -50,32 +74,41 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		FlxG.collide(_player, _mWalls);
-		FlxG.collide(_monsterS, _mWalls);
- 		_monsterS.forEachAlive(checkEnemyVision);
+		for (monster in _monsterS) // updates state of the monsters
+		{
+			// monster.findPlayer(_player);
+		}
 
-		FlxG.overlap(_player, _grpItems, _player.pickUpAnItem);
+		_monsterS.forEachAlive(checkEnemyVision);
 
-		if (FlxG.keys.pressed.ESCAPE) FlxG.switchState(new PauseState());
+		if (FlxG.keys.pressed.ESCAPE)
+			openSubState(pauseSubState);
+
+		if (_player.alive == false)
+			openSubState(gameOverState);
 	}
 
-	function checkEnemyVision(e:Monster):Void
-	{
-		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint()))
-		{
+	function checkEnemyVision(e:Monster):Void {
+		e.playerPos.copyFrom(_player.getMidpoint());
+		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())) {
 			e.seesPlayer = true;
-			e.playerPos.copyFrom(_player.getMidpoint());
-			//e.rememberPlayerPos = true;	
-		}
-		else if (e.rememberPlayerPos = true)
-		{	
+			e.attackBegin = true;
+			//e.idle();
+		}else{
 			e.seesPlayer = false;
+			e.attackBegin = false;
+			e.findPathToPlayer(_mWalls, _player);
 		}
-			else
-		{
-			e.seesPlayer = true;
-		}
- 	}
+	}
+	
+	override public function destroy():Void {
+		super.destroy();
+
+		pauseSubState.destroy();
+		pauseSubState = null;
+		gameOverState.destroy();
+		gameOverState = null;
+	}
 
 	function placeEntities(entityName:String, entityData:Xml):Void {
 		var x:Int = Std.parseInt(entityData.get("x"));
@@ -87,16 +120,19 @@ class PlayState extends FlxState
 			var name:String = entityData.get("name");
 			switch (name) {
 				case "apple":
-					_grpItems.add(new Food(x, y, name, 5));
-				case "diamond":
-					_grpItems.add(new PassiveItem(x, y, name));
+					_grpItems.add(new ConsumableItem(x, y, name, 5, 3));
 				case "elixir":
-					_grpItems.add(new Elixir(x, y, name, 20));
+					_grpItems.add(new ConsumableItem(x, y, name, 20));
+				case "pistol":
+					_grpItems.add(new Weapon(x, y, name, 2, 0.5, 70, TypeOfShooting.STRAIGHT, 1, new FlxBounds<Float>(4, 4)));
+				case "shotgun":
+					_grpItems.add(new Weapon(x, y, name, 25, 1, 70, TypeOfShooting.SHOTGUN, 4, new FlxBounds<Float>(4, 4)));
+				case "wand":
+					_grpItems.add(new Weapon(x, y, name, 10, 0.5, 70, TypeOfShooting.STRAIGHT, 15, new FlxBounds<Float>(6, 6)));
 			}
-		}
-		else if (entityName == "monster")
-		{
-			 _monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
+		} else if (entityName == "monster") {
+			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
 		}
 	}
+          
 }

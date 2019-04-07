@@ -1,31 +1,22 @@
 package actors;
 
-import flixel.FlxObject;
-import flixel.FlxSprite;
+import item.passive.Projectile;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
 import flixel.system.debug.console.ConsoleUtil;
-import flixel.ui.FlxBar;
 import item.BaseItem;
 
-
-class Player extends FlxSprite {
-	public var speed:Float = 100;
-	public var activeItems:List<BaseItem>;
-	public var passiveItems:List<BaseItem>;
-	public var healthBar:FlxBar;
-
+class Player extends Actor {
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
+		isPlayer = true;
+		health = 100;
+		speed = 150;
 
-		health = 20;
-		healthBar = new FlxBar(16, 64, FlxBarFillDirection.LEFT_TO_RIGHT, 32, 4, this, "health");
-		healthBar.trackParent(-7, -8);
 
 		loadGraphic(AssetPaths.player__png, true, 16, 16);
-		setFacingFlip(FlxObject.LEFT, false, false);
-		setFacingFlip(FlxObject.RIGHT, true, false);
 
 		animation.add("lr", [3, 4, 3, 5], 6, false);
 		animation.add("u", [6, 7, 6, 8], 6, false);
@@ -35,52 +26,74 @@ class Player extends FlxSprite {
 		setSize(8, 14);
 		offset.set(4, 2);
 
-		activeItems = new List<BaseItem>();
-		passiveItems = new List<BaseItem>();
+		bullets = new FlxTypedGroup(50);
+		var bullet:Projectile;
+
+		// Create 10 bullets for the player to recycle
+		for (i in 0...bullets.maxSize) {
+			// Instantiate a new sprite offscreen
+			bullet = new Projectile();
+			// Add it to the group of player bullets
+			bullets.add(bullet);
+		}
 	}
 
 	override public function update(elapsed:Float):Void {
+		super.update(elapsed);
+
 		movement();
 		useActiveItem();
-		super.update(elapsed);
+		selectWeapon();
+
+		if (FlxG.keys.justPressed.E) {
+			for (item in playState._grpItems) {
+				if (FlxG.overlap(this, item)) {
+					ConsoleUtil.log("Overlaped with: " + item.name);
+					if (item.isPickable()) {
+						pickUpAnItem(item);
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	function movement():Void {
-		var _up:Bool = false;
-		var _down:Bool = false;
-		var _left:Bool = false;
-		var _right:Bool = false;
+		goesUp = false;
+		goesDown = false;
+		goesLeft = false;
+		goesRight = false;
 
-		_up = FlxG.keys.anyPressed([UP, W]);
-		_down = FlxG.keys.anyPressed([DOWN, S]);
-		_left = FlxG.keys.anyPressed([LEFT, A]);
-		_right = FlxG.keys.anyPressed([RIGHT, D]);
+		goesUp = FlxG.keys.anyPressed([UP, W]);
+		goesDown = FlxG.keys.anyPressed([DOWN, S]);
+		goesLeft = FlxG.keys.anyPressed([LEFT, A]);
+		goesRight = FlxG.keys.anyPressed([RIGHT, D]);
 
-		if (_up && _down)
-			_up = _down = false;
-		if (_left && _right)
-			_left = _right = false;
+		if (goesUp && goesDown)
+			goesUp = goesDown = false;
+		if (goesLeft && goesRight)
+			goesLeft = goesRight = false;
 
-		if (_left || _right || _up || _down) {
-			var mA:Float = 0;
-			if (_up) {
+		if (goesLeft || goesRight || goesUp || goesDown) {
+			mA = 0;
+			if (goesUp) {
 				mA = -90;
-				if (_left)
+				if (goesLeft)
 					mA -= 45;
-				else if (_right)
+				else if (goesRight)
 					mA += 45;
 				facing = FlxObject.UP;
-			} else if (_down) {
+			} else if (goesDown) {
 				mA = 90;
-				if (_left)
+				if (goesLeft)
 					mA += 45;
-				else if (_right)
+				else if (goesRight)
 					mA -= 45;
 				facing = FlxObject.DOWN;
-			} else if (_left) {
+			} else if (goesLeft) {
 				mA = 180;
 				facing = FlxObject.LEFT;
-			} else if (_right) {
+			} else if (goesRight) {
 				mA = 0;
 				facing = FlxObject.RIGHT;
 			}
@@ -100,14 +113,24 @@ class Player extends FlxSprite {
 		}
 	}
 
+	// using an active item
 	function useActiveItem():Void {
-		// using an active item
 		if (FlxG.keys.justPressed.SPACE) {
 			if (activeItems.length > 0) {
 				var lastItem = activeItems.last();
 				lastItem.onUse(this);
 			} else {
 				ConsoleUtil.log("No active items to use!");
+			}
+		} else if (FlxG.mouse.pressed) {
+			if (weapons.length > 0) {
+				if (selectedWeapon.onUse(this)) {
+					ConsoleUtil.log("Fired!");
+				} else {
+					ConsoleUtil.log("Not fired!");
+				}
+			} else {
+				ConsoleUtil.log("No weapons to use!");
 			}
 		}
 
@@ -123,22 +146,57 @@ class Player extends FlxSprite {
 				passiveItemsLog += item.name + ";";
 			}
 
+			var weaponsLog:String = "weapons: ";
+			for (item in weapons) {
+				weaponsLog += item.name + ";";
+			}
+
 			ConsoleUtil.log(activeItemsLog);
 			ConsoleUtil.log(passiveItemsLog);
+			ConsoleUtil.log(weaponsLog);
+
 			ConsoleUtil.log("Health: " + this.health);
 		}
 	}
 
-	public function pickUpAnItem(P:Player, I:BaseItem):Void {
-		if (P.alive && P.exists && I.alive && I.exists) {
-			if (FlxG.keys.pressed.E) {
-				if (I.isActive) {
-					P.activeItems.add(I);
+	function pickUpAnItem(I:BaseItem):Void {
+		if (exists && alive) {
+			I.alive = false;
+			I.visible = false;
+			I.setPosition(0, 0);
+			I.owner = this;
+			if (I.isActive) {
+				if (I.isWeapon) {
+					if (weapons.members.length == weapons.maxSize) {
+						ConsoleUtil.log("DROP: " + selectedWeapon.name);
+
+						selectedWeapon.alive = true;
+						selectedWeapon.visible = true;
+						selectedWeapon.setPosition(x, y);
+
+						var indexOfSelectedWeapon = weapons.members.indexOf(selectedWeapon);
+						weapons.members[indexOfSelectedWeapon] = I;
+					} else {
+						weapons.add(I);
+					}
+					selectedWeapon = I;
 				} else {
-					P.passiveItems.add(I);
+					activeItems.add(I);
 				}
-				I.kill();
+			} else {
+				passiveItems.add(I);
 			}
+		}
+	}
+
+	function selectWeapon():Void {
+		if (FlxG.keys.justPressed.ONE) {
+			selectedWeapon = weapons.members[0];
+		} else if (FlxG.keys.justPressed.TWO) {
+			if (weapons.length == 1) {
+				return;
+			}
+			selectedWeapon = weapons.members[1];
 		}
 	}
 }
