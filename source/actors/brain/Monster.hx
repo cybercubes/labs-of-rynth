@@ -1,5 +1,6 @@
 package actors.brain;
 
+import flixel.tile.FlxTilemap;
 import item.passive.Projectile;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import item.active.weapon.TypeOfShooting;
@@ -11,6 +12,8 @@ import flixel.util.helpers.FlxBounds;
 import flixel.math.FlxPoint;
 import actors.brain.FSM;
 import actors.Player;
+import utils.MathUtils;
+import flixel.math.FlxAngle;
 
 class Monster extends Actor {
 	public var range:Float = 0;
@@ -19,11 +22,12 @@ class Monster extends Actor {
 	private var _idleTmr:Float;
 	private var _moveDir:Float;
 
+	public var attackBegin:Bool = false;
 	public var seesPlayer:Bool = false;
 	public var playerPos(default, null):FlxPoint;
 	public var etype(default, null):Int;
 
-	private var distance:Float; // distance between monster and player
+	public var distance:Float; // distance between monster and player
 
 	public function new(?X:Float = 0, ?Y:Float = 0, EType:Int) {
 		super(X, Y);
@@ -34,7 +38,7 @@ class Monster extends Actor {
 		animation.add("lr", [3, 4, 3, 5], 6, false);
 		animation.add("u", [6, 7, 6, 8], 6, false);
 
-		speed = 10;
+		speed = 50;
 
 		health = 100;
 
@@ -128,6 +132,43 @@ class Monster extends Actor {
 		}
 	}
 
+	public function findPathToPlayer(walls:FlxTilemap, p:Player):Void{
+		var faceAngle:Float = MathUtils.toDegrees(FlxAngle.angleBetween(this, p, true));
+		var rowAngle:Float = faceAngle - 90;
+		var firstPoint:FlxPoint = new FlxPoint(0,0);
+		var childPoint:FlxPoint = new FlxPoint(0,0);
+		var interval:Float = 1;
+		var numberOfPoints:Int = 200;
+		var dX:Float = interval * Math.sin(MathUtils.toRads(90 - rowAngle));
+		var dY:Float = interval * Math.sin(MathUtils.toRads(rowAngle));
+		var xIncrementSign:Float = Math.abs(Math.cos(MathUtils.toRads(faceAngle))) / Math.cos(MathUtils.toRads(faceAngle));
+		var yIncrementSign:Float = Math.abs(Math.sin(MathUtils.toRads(faceAngle))) / Math.sin(MathUtils.toRads(faceAngle));
+
+		firstPoint.x = (numberOfPoints / 2 * dX) + (p.x * xIncrementSign);
+		firstPoint.y = (numberOfPoints / 2 * dY) + (p.y * yIncrementSign);
+
+		for (i in 1...numberOfPoints){
+			if (i == 1){
+				if(walls.ray(this.getMidpoint(), firstPoint)){
+					if(walls.ray(firstPoint, p.getMidpoint())){
+						FlxVelocity.moveTowardsPoint(this, firstPoint, Std.int(speed));
+						break;
+					}
+				}
+			}else{
+				childPoint.x = firstPoint.x * (dX * xIncrementSign * i);
+				childPoint.y = firstPoint.y * (dY * yIncrementSign * i);
+
+				if(walls.ray(this.getMidpoint(), childPoint)){
+					if(walls.ray(childPoint, p.getMidpoint())){
+						FlxVelocity.moveTowardsPoint(this, childPoint, Std.int(speed));
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 		_brain.update();
@@ -136,7 +177,7 @@ class Monster extends Actor {
 	}
 
 	function attack():Void {
-		if (seesPlayer) {
+		if (attackBegin) {
 			selectedWeapon.onUse(this);
 		}
 	}

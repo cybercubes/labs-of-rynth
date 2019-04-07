@@ -17,13 +17,14 @@ class Weapon extends ActiveItem {
 
 	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, RecoilForce:Float, typeOfShooting:String, bulletsToShoot:Int,
 			SizeOfBarrel:FlxBounds<Float>) {
+
 		super(X, Y);
 		isWeapon = true;
 		name = Name;
 		loadGraphic("assets/images/active_items/weapons/" + name + ".png", false, 8, 8);
 		this.damage = Damage;
 		this.speed = Speed;
-		this.recoilForce = RecoilForce;
+		this.recoilForce = recoilForce;
 		this.typeOfShooting = typeOfShooting;
 		this.bulletsToShoot = bulletsToShoot;
 		this.sizeOfBarrel = SizeOfBarrel;
