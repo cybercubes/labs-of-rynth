@@ -133,10 +133,11 @@ class PlayState extends FlxState {
 		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())) {
 			e.seesPlayer = true;
 			e.attackBegin = true;
+			//e.idle();
 		}else{
-			e.findPathToPlayer(_mWalls, _player);
 			e.seesPlayer = false;
 			e.attackBegin = false;
+			e.findPathToPlayer(_mWalls, _player);
 		}
 	}
 	

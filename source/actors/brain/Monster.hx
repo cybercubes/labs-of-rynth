@@ -39,7 +39,7 @@ class Monster extends Actor {
 
 		health = 100;
 
-		drag.x = drag.y = 10; // drag is a value that determines how quickly the body will slowdown
+		drag.x = drag.y = 50; // drag is a value that determines how quickly the body will slowdown
 		width = 8;
 		height = 14;
 		offset.x = 4;
@@ -92,20 +92,8 @@ class Monster extends Actor {
 
 	public function idle():Void {
 		if (seesPlayer) {
-			findPathToPlayer(playState._mWalls, playState._player);
-		} else if (_idleTmr <= 0) {
-			if (FlxG.random.bool(1)) {
-				_moveDir = -1;
-				velocity.x = velocity.y = 0;
-			} else {
-				_moveDir = FlxG.random.int(0, 8) * 45;
-
-				velocity.set(speed * 0.3, 0);
-				velocity.rotate(FlxPoint.weak(), _moveDir);
-			}
-			_idleTmr = FlxG.random.int(1, 4);
-		} else
-			_idleTmr -= FlxG.elapsed;
+			FlxVelocity.moveTowardsPoint(this, playerPos, Std.int(speed));
+		}
 	}
 
 	public function findPathToPlayer(walls:FlxTilemap, p:Player):Void{
@@ -144,15 +132,13 @@ class Monster extends Actor {
 					}
 				}
 			}
-		}else{
-			FlxVelocity.moveTowardsPoint(this, playerPos, Std.int(speed));
 		}
 	}
 
 	override public function update(elapsed:Float):Void {
 		attack();
+		idle();
 		super.update(elapsed);
-		
 	}
 
 	function attack():Void {
