@@ -22,7 +22,14 @@ import flixel.math.FlxAngle;
 import utils.MathUtils;
 
 class PlayState extends FlxState {
+
+	public var _map:FlxOgmoLoader;
+	public var _mWalls:FlxTilemap;
+	public var _grpItems:FlxTypedGroup<BaseItem>;
+	public var _monsterS:FlxTypedGroup<Monster>;
+
 	var _map:FlxOgmoLoader;
+
 
 	public var _mWalls:FlxTilemap;
 	public var _grpItems:FlxTypedGroup<BaseItem>;
@@ -97,10 +104,11 @@ class PlayState extends FlxState {
 		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())) {
 			e.seesPlayer = true;
 			e.attackBegin = true;
+			//e.idle();
 		}else{
-			e.findPathToPlayer(_mWalls, _player);
 			e.seesPlayer = false;
 			e.attackBegin = false;
+			e.findPathToPlayer(_mWalls, _player);
 		}
 	}
 	
