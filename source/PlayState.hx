@@ -1,5 +1,8 @@
 package;
 
+import flixel.math.FlxVelocity;
+import flixel.math.FlxPoint;
+import actors.Actor;
 import flixel.util.FlxColor;
 import flixel.FlxState;
 import actors.brain.Monster;
@@ -14,13 +17,17 @@ import item.active.ConsumableItem;
 import item.active.weapon.Weapon;
 import item.active.weapon.TypeOfShooting;
 import flixel.util.helpers.FlxBounds;
+import item.passive.Projectile;
+import flixel.math.FlxAngle;
+import utils.MathUtils;
 
 class PlayState extends FlxState {
-	var _map:FlxOgmoLoader;
 
+	public var _map:FlxOgmoLoader;
 	public var _mWalls:FlxTilemap;
 	public var _grpItems:FlxTypedGroup<BaseItem>;
 	public var _monsterS:FlxTypedGroup<Monster>;
+
 	public var _player:Player;
 
 	//SubStates
@@ -35,8 +42,9 @@ class PlayState extends FlxState {
 		pauseSubStateColor = 0x99808080;
 		pauseSubState = new PauseState(pauseSubStateColor);
 		gameOverState = new GameOverState();
-
+    
 		_map = new FlxOgmoLoader(AssetPaths.room002__oel);
+
 		_mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
 		_mWalls.follow();
 		_mWalls.setTileProperties(1, FlxObject.NONE);
@@ -81,12 +89,18 @@ class PlayState extends FlxState {
 	}
 
 	function checkEnemyVision(e:Monster):Void {
+		e.playerPos.copyFrom(_player.getMidpoint());
 		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())) {
 			e.seesPlayer = true;
-			e.playerPos.copyFrom(_player.getMidpoint());
+			e.attackBegin = true;
+			//e.idle();
+		}else{
+			e.seesPlayer = false;
+			e.attackBegin = false;
+			e.findPathToPlayer(_mWalls, _player);
 		}
 	}
-
+	
 	override public function destroy():Void {
 		super.destroy();
 

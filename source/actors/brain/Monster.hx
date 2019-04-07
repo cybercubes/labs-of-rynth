@@ -1,5 +1,6 @@
 package actors.brain;
 
+import flixel.tile.FlxTilemap;
 import item.passive.Projectile;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import item.active.weapon.TypeOfShooting;
@@ -9,21 +10,22 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.util.helpers.FlxBounds;
 import flixel.math.FlxPoint;
-import actors.brain.FSM;
 import actors.Player;
+import utils.MathUtils;
+import flixel.math.FlxAngle;
 
 class Monster extends Actor {
 	public var range:Float = 0;
 
-	private var _brain:FSM;
 	private var _idleTmr:Float;
 	private var _moveDir:Float;
 
+	public var attackBegin:Bool = false;
 	public var seesPlayer:Bool = false;
 	public var playerPos(default, null):FlxPoint;
 	public var etype(default, null):Int;
 
-	private var distance:Float; // distance between monster and player
+	public var distance:Float; // distance between monster and player
 
 	public function new(?X:Float = 0, ?Y:Float = 0, EType:Int) {
 		super(X, Y);
@@ -34,16 +36,15 @@ class Monster extends Actor {
 		animation.add("lr", [3, 4, 3, 5], 6, false);
 		animation.add("u", [6, 7, 6, 8], 6, false);
 
-		speed = 10;
+		speed = 50;
 
 		health = 100;
 
-		drag.x = drag.y = 10; // drag is a value that determines how quickly the body will slowdown
+		drag.x = drag.y = 50; // drag is a value that determines how quickly the body will slowdown
 		width = 8;
 		height = 14;
 		offset.x = 4;
 		offset.y = 2;
-		_brain = new FSM(idle);
 		_idleTmr = 0;
 		playerPos = FlxPoint.get();
 
@@ -104,39 +105,57 @@ class Monster extends Actor {
 
 	public function idle():Void {
 		if (seesPlayer) {
-			_brain.activeState = chase;
-		} else if (_idleTmr <= 0) {
-			if (FlxG.random.bool(1)) {
-				_moveDir = -1;
-				velocity.x = velocity.y = 0;
-			} else {
-				_moveDir = FlxG.random.int(0, 8) * 45;
-
-				velocity.set(speed * 0.3, 0);
-				velocity.rotate(FlxPoint.weak(), _moveDir);
-			}
-			_idleTmr = FlxG.random.int(1, 4);
-		} else
-			_idleTmr -= FlxG.elapsed;
-	}
-
-	public function chase():Void {
-		if (!seesPlayer) {
-			_brain.activeState = idle;
-		} else {
 			FlxVelocity.moveTowardsPoint(this, playerPos, Std.int(speed));
 		}
 	}
 
-	override public function update(elapsed:Float):Void {
-		super.update(elapsed);
-		_brain.update();
+	public function findPathToPlayer(walls:FlxTilemap, p:Player):Void{
+		if(!seesPlayer){
+			var faceAngle:Float = MathUtils.toDegrees(FlxAngle.angleBetween(this, p, true));
+			var rowAngle:Float = faceAngle - 90;
+			var firstPoint:FlxPoint = new FlxPoint(0,0);
+			var childPoint:FlxPoint = new FlxPoint(0,0);
+			var interval:Float = 1;
+			var numberOfPoints:Int = 200;
+			var dX:Float = interval * Math.sin(MathUtils.toRads(90 - rowAngle));
+			var dY:Float = interval * Math.sin(MathUtils.toRads(rowAngle));
+			var xIncrementSign:Float = Math.abs(Math.cos(MathUtils.toRads(faceAngle))) / Math.cos(MathUtils.toRads(faceAngle));
+			var yIncrementSign:Float = Math.abs(Math.sin(MathUtils.toRads(faceAngle))) / Math.sin(MathUtils.toRads(faceAngle));
 
+			firstPoint.x = (numberOfPoints / 2 * dX) + (p.x * xIncrementSign);
+			firstPoint.y = (numberOfPoints / 2 * dY) + (p.y * yIncrementSign);
+
+			for (i in 1...numberOfPoints){
+				if (i == 1){
+					if(walls.ray(this.getMidpoint(), firstPoint)){
+						if(walls.ray(firstPoint, p.getMidpoint())){
+							FlxVelocity.moveTowardsPoint(this, firstPoint, Std.int(speed));
+							break;
+						}
+					}
+				}else{
+					childPoint.x = firstPoint.x * (dX * xIncrementSign * i);
+					childPoint.y = firstPoint.y * (dY * yIncrementSign * i);
+
+					if(walls.ray(this.getMidpoint(), childPoint)){
+						if(walls.ray(childPoint, p.getMidpoint())){
+							FlxVelocity.moveTowardsPoint(this, childPoint, Std.int(speed));
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	override public function update(elapsed:Float):Void {
 		attack();
+		idle();
+		super.update(elapsed);
 	}
 
 	function attack():Void {
-		if (seesPlayer) {
+		if (attackBegin) {
 			selectedWeapon.onUse(this);
 		}
 	}
