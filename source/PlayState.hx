@@ -22,10 +22,10 @@ import flixel.math.FlxAngle;
 import utils.MathUtils;
 
 class PlayState extends FlxState {
-	var _map:FlxOgmoLoader;
-	var _mWalls:FlxTilemap;
-	var _grpItems:FlxTypedGroup<BaseItem>;
-	var _monsterS:FlxTypedGroup<Monster>;
+	public var _map:FlxOgmoLoader;
+	public var _mWalls:FlxTilemap;
+	public var _grpItems:FlxTypedGroup<BaseItem>;
+	public var _monsterS:FlxTypedGroup<Monster>;
 
 	public var _player:Player;
 	public var _playerBullets:FlxTypedGroup<Projectile>;
@@ -44,7 +44,7 @@ class PlayState extends FlxState {
 		subStateColor = 0x99808080;
 		pauseSubState = new PauseState(subStateColor);
 
-		_map = new FlxOgmoLoader(AssetPaths.room001__oel);
+		_map = new FlxOgmoLoader(AssetPaths.room003__oel);
 		_mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
 		_mWalls.follow();
 		_mWalls.setTileProperties(1, FlxObject.NONE);
