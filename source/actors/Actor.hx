@@ -1,11 +1,12 @@
 package actors;
 
-import item.passive.Projectile;
+import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.ui.FlxBar;
 import item.BaseItem;
+import item.passive.Projectile;
 
 class Actor extends FlxSprite {
 	public var speed:Float;
@@ -19,34 +20,41 @@ class Actor extends FlxSprite {
 	public var goesRight:Bool;
 	public var mA:Float;
 	public var selectedWeapon:BaseItem;
-    public var isPlayer:Bool;
+	public var isPlayer:Bool;
+	public var bullets:FlxTypedGroup<Projectile>;
+
+	var playState:PlayState;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
 
+		// Определяет, как поворачивается персонаж в сторону когда смотрит в определённом направлении
 		setFacingFlip(FlxObject.LEFT, false, false);
 		setFacingFlip(FlxObject.RIGHT, true, false);
 
+		// Создание полосы здоровья над игровым персонажем
 		healthBar = new FlxBar(16, 64, FlxBarFillDirection.LEFT_TO_RIGHT, 32, 4, this, "health");
 		healthBar.trackParent(-7, -8);
 
 		activeItems = new List<BaseItem>();
 		passiveItems = new List<BaseItem>();
 
-		weapons = new FlxTypedGroup<BaseItem>();
+		weapons = new FlxTypedGroup<BaseItem>(2);
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
+		playState = cast FlxG.state;
+		FlxG.collide(this, playState._mWalls);
+
 	}
 
-	public function takeDamage(p:Projectile):Void {
-		this.hurt(p.damage);
+	public static function takeDamage(p:Projectile, a:Actor):Void {
+		p.kill();
+		a.hurt(p.damage);
 
-		if (health <= 0) {
-			healthBar.kill();
+		if (a.health <= 0) {
+			a.healthBar.kill();
 		}
 	}
-
-
 }
