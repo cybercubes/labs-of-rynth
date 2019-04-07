@@ -105,10 +105,10 @@ class PlayState extends FlxState {
 		} else if (entityName == "item") {
 			var name:String = entityData.get("name");
 			switch (name) {
-				case "apple":
+				/*case "apple":
 					_grpItems.add(new ConsumableItem(x, y, name, 5, 3));
 				case "elixir":
-					_grpItems.add(new ConsumableItem(x, y, name, 20));
+					_grpItems.add(new ConsumableItem(x, y, name, 20));*/
 				case "pistol":
 					_grpItems.add(new Weapon(x, y, name, 2, 0.5, 70, TypeOfShooting.STRAIGHT, 1, new FlxBounds<Float>(4, 4)));
 				case "shotgun":
