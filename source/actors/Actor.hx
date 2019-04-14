@@ -19,9 +19,12 @@ class Actor extends FlxSprite {
 	public var goesLeft:Bool;
 	public var goesRight:Bool;
 	public var mA:Float;
-	public var selectedWeapon:BaseItem;
+	public var indexOfselectedWeapon:Int;
 	public var isPlayer:Bool;
 	public var bullets:FlxTypedGroup<Projectile>;
+
+	public static inline var SPEED = "speed";
+	public static inline var HEALTH = "health";
 
 	var playState:PlayState;
 
@@ -40,13 +43,13 @@ class Actor extends FlxSprite {
 		passiveItems = new List<BaseItem>();
 
 		weapons = new FlxTypedGroup<BaseItem>(2);
+
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 		playState = cast FlxG.state;
 		FlxG.collide(this, playState._mWalls);
-
 	}
 
 	public static function takeDamage(p:Projectile, a:Actor):Void {

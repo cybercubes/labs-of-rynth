@@ -6,7 +6,6 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import item.active.weapon.TypeOfShooting;
 import item.active.weapon.Weapon;
 import flixel.math.FlxVelocity;
-import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.util.helpers.FlxBounds;
 import flixel.math.FlxPoint;
@@ -36,7 +35,7 @@ class Monster extends Actor {
 		animation.add("lr", [3, 4, 3, 5], 6, false);
 		animation.add("u", [6, 7, 6, 8], 6, false);
 
-		speed = 50;
+		speed = 1;
 
 		health = 100;
 
@@ -53,7 +52,7 @@ class Monster extends Actor {
 		weapon.alive = false;
 		weapon.owner = this;
 		weapons.add(weapon);
-		selectedWeapon = weapons.members[0];
+		indexOfselectedWeapon = 0;
 
 		bullets = new FlxTypedGroup(50);
 		var bullet:Projectile;
@@ -156,7 +155,7 @@ class Monster extends Actor {
 
 	function attack():Void {
 		if (attackBegin) {
-			selectedWeapon.onUse(this);
+			weapons.members[indexOfselectedWeapon].onUse(this);
 		}
 	}
 }

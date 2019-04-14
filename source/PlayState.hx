@@ -1,8 +1,5 @@
 package;
 
-import flixel.math.FlxVelocity;
-import flixel.math.FlxPoint;
-import actors.Actor;
 import flixel.util.FlxColor;
 import flixel.FlxState;
 import actors.brain.Monster;
@@ -17,9 +14,6 @@ import item.active.ConsumableItem;
 import item.active.weapon.Weapon;
 import item.active.weapon.TypeOfShooting;
 import flixel.util.helpers.FlxBounds;
-import item.passive.Projectile;
-import flixel.math.FlxAngle;
-import utils.MathUtils;
 
 class PlayState extends FlxState {
 
@@ -119,10 +113,10 @@ class PlayState extends FlxState {
 		} else if (entityName == "item") {
 			var name:String = entityData.get("name");
 			switch (name) {
-				case "apple":
-					_grpItems.add(new ConsumableItem(x, y, name, 5, 3));
-				case "elixir":
-					_grpItems.add(new ConsumableItem(x, y, name, 20));
+				case "elixirOfHealth":
+					_grpItems.add(new ConsumableItem(x, y, name));
+				case "elixirOfSpeed":
+					_grpItems.add(new ConsumableItem(x, y, name));
 				case "pistol":
 					_grpItems.add(new Weapon(x, y, name, 2, 0.5, 70, TypeOfShooting.STRAIGHT, 1, new FlxBounds<Float>(4, 4)));
 				case "shotgun":
