@@ -9,11 +9,12 @@ import flixel.system.debug.console.ConsoleUtil;
 import item.BaseItem;
 
 class Player extends Actor {
+
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
 		isPlayer = true;
-		health = 100;
-		speed = 150;
+		health = 50;
+		speed = 75;
 
 
 		loadGraphic(AssetPaths.player__png, true, 16, 16);
@@ -124,7 +125,7 @@ class Player extends Actor {
 			}
 		} else if (FlxG.mouse.pressed) {
 			if (weapons.length > 0) {
-				if (selectedWeapon.onUse(this)) {
+				if (weapons.members[indexOfselectedWeapon].onUse(this)) {
 					ConsoleUtil.log("Fired!");
 				} else {
 					ConsoleUtil.log("Not fired!");
@@ -168,18 +169,17 @@ class Player extends Actor {
 			if (I.isActive) {
 				if (I.isWeapon) {
 					if (weapons.members.length == weapons.maxSize) {
-						ConsoleUtil.log("DROP: " + selectedWeapon.name);
+						ConsoleUtil.log("DROP: " + weapons.members[indexOfselectedWeapon].name);
 
-						selectedWeapon.alive = true;
-						selectedWeapon.visible = true;
-						selectedWeapon.setPosition(x, y);
+						weapons.members[indexOfselectedWeapon].alive = true;
+						weapons.members[indexOfselectedWeapon].visible = true;
+						weapons.members[indexOfselectedWeapon].setPosition(x, y);
 
-						var indexOfSelectedWeapon = weapons.members.indexOf(selectedWeapon);
-						weapons.members[indexOfSelectedWeapon] = I;
+						weapons.members[indexOfselectedWeapon] = I;
 					} else {
 						weapons.add(I);
 					}
-					selectedWeapon = I;
+					indexOfselectedWeapon = weapons.members.indexOf(I);
 				} else {
 					activeItems.add(I);
 				}
@@ -191,12 +191,12 @@ class Player extends Actor {
 
 	function selectWeapon():Void {
 		if (FlxG.keys.justPressed.ONE) {
-			selectedWeapon = weapons.members[0];
+			indexOfselectedWeapon = 0;
 		} else if (FlxG.keys.justPressed.TWO) {
 			if (weapons.length == 1) {
 				return;
 			}
-			selectedWeapon = weapons.members[1];
+			indexOfselectedWeapon = 1;
 		}
 	}
 }

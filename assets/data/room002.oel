@@ -35,5 +35,7 @@
     <item id="2" x="208" y="224" name="pistol" />
     <item id="3" x="240" y="224" name="shotgun" />
     <item id="4" x="272" y="224" name="wand" />
+    <item id="5" x="240" y="272" name="elixirOfSpeed" />
+    <item id="6" x="272" y="272" name="elixirOfHealth" />
   </entities>
 </level>
