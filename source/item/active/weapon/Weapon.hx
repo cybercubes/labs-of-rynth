@@ -15,9 +15,10 @@ class Weapon extends ActiveItem {
 	public var typeOfShooting:String;
 	public var bulletsToShoot:Int;
 	public var sizeOfBarrel:FlxBounds<Float>;
+	public var spread:Int;
 
 	public function new(X:Float = 0, Y:Float = 0, name:String, damage:Int, speed:Float, recoilForce:Float, typeOfShooting:String, bulletsToShoot:Int,
-			sizeOfBarrel:FlxBounds<Float>) {
+			sizeOfBarrel:FlxBounds<Float>, spread:Int = 360) {
 		super(X, Y);
 		isWeapon = true;
 		this.name = name;
@@ -28,6 +29,7 @@ class Weapon extends ActiveItem {
 		this.typeOfShooting = typeOfShooting;
 		this.bulletsToShoot = bulletsToShoot;
 		this.sizeOfBarrel = sizeOfBarrel;
+		this.spread = spread;
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -59,18 +61,17 @@ class Weapon extends ActiveItem {
 
 			bullet.speed = recoilForce;
 			bullet.damage = damage;
-			// bullet.angleOffset = 45;
 			if (!bullet.size.equals(sizeOfBarrel)) {
 				bullet.changeSize(sizeOfBarrel);
 			}
 			bullet.reset(actor.x + actor.width / 2, actor.y);
 			bullet.owner = owner;
 
-			switch (typeOfShooting) {
-				case TypeOfShooting.SHOTGUN:
-					finalAngle = (finalAngle - 45) + (90 / (bulletsToShoot - 1) * i);
-				case TypeOfShooting.STRAIGHT:
-					finalAngle = (360 / bulletsToShoot) * i + finalAngle;
+			if (bulletsToShoot != 1) {
+				switch (typeOfShooting) {
+					case TypeOfShooting.STRAIGHT:
+						finalAngle = (finalAngle - (spread / 2)) + (spread / (bulletsToShoot - 1) * i);
+				}
 			}
 
 			bullet.move(finalAngle);

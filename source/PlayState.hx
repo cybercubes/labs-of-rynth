@@ -125,7 +125,7 @@ class PlayState extends FlxState {
 				case "pistol":
 					_grpItems.add(new Weapon(x, y, name, 2, 0.5, 70, TypeOfShooting.STRAIGHT, 1, new FlxBounds<Float>(4, 4)));
 				case "shotgun":
-					_grpItems.add(new Weapon(x, y, name, 25, 1, 70, TypeOfShooting.SHOTGUN, 4, new FlxBounds<Float>(4, 4)));
+					_grpItems.add(new Weapon(x, y, name, 25, 1, 70, TypeOfShooting.STRAIGHT, 20, new FlxBounds<Float>(4, 4), 30));
 				case "wand":
 					_grpItems.add(new Weapon(x, y, name, 10, 0.5, 70, TypeOfShooting.STRAIGHT, 15, new FlxBounds<Float>(6, 6)));
 			}
