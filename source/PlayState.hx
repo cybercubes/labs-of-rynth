@@ -1,5 +1,7 @@
 package;
 
+import actors.Actor;
+import item.passive.Projectile;
 import flixel.util.FlxColor;
 import flixel.FlxState;
 import actors.brain.Monster;
@@ -16,15 +18,13 @@ import item.active.weapon.TypeOfShooting;
 import flixel.util.helpers.FlxBounds;
 
 class PlayState extends FlxState {
-
 	public var _map:FlxOgmoLoader;
 	public var _mWalls:FlxTilemap;
 	public var _grpItems:FlxTypedGroup<BaseItem>;
 	public var _monsterS:FlxTypedGroup<Monster>;
-
 	public var _player:Player;
 
-	//SubStates
+	// SubStates
 	var pauseSubState:PauseState;
 	var gameOverState:GameOverState;
 	var pauseSubStateColor:FlxColor;
@@ -36,7 +36,7 @@ class PlayState extends FlxState {
 		pauseSubStateColor = 0x99808080;
 		pauseSubState = new PauseState(pauseSubStateColor);
 		gameOverState = new GameOverState();
-    
+
 		_map = new FlxOgmoLoader(AssetPaths.room002__oel);
 
 		_mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
@@ -59,8 +59,9 @@ class PlayState extends FlxState {
 		for (monster in _monsterS) {
 			add(monster.healthBar);
 			add(monster.weapons);
-			add(monster.bullets);
 		}
+		Monster.sharedBullets = Monster.loadBullets();
+		add(Monster.sharedBullets);
 
 		FlxG.camera.follow(_player, TOPDOWN, 1);
 	}
@@ -68,10 +69,14 @@ class PlayState extends FlxState {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		for (monster in _monsterS) // updates state of the monsters
-		{
-			// monster.findPlayer(_player);
-		}
+		FlxG.collide(_player, _mWalls);
+		FlxG.collide(_monsterS, _mWalls);
+
+		FlxG.collide(_player.bullets, _mWalls, Projectile.collide);
+		FlxG.collide(Monster.sharedBullets, _mWalls, Projectile.collide);
+
+		FlxG.overlap(_player.bullets, _monsterS, Actor.takeDamage);
+		FlxG.overlap(Monster.sharedBullets, _player, Actor.takeDamage);
 
 		_monsterS.forEachAlive(checkEnemyVision);
 
@@ -87,14 +92,14 @@ class PlayState extends FlxState {
 		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())) {
 			e.seesPlayer = true;
 			e.attackBegin = true;
-			//e.idle();
-		}else{
+			// e.idle();
+		} else {
 			e.seesPlayer = false;
 			e.attackBegin = false;
 			e.findPathToPlayer(_mWalls, _player);
 		}
 	}
-	
+
 	override public function destroy():Void {
 		super.destroy();
 
@@ -128,5 +133,4 @@ class PlayState extends FlxState {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
 		}
 	}
-          
 }

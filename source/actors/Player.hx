@@ -47,6 +47,7 @@ class Player extends Actor {
 		selectWeapon();
 
 		if (FlxG.keys.justPressed.E) {
+			var playState:PlayState = cast FlxG.state;
 			for (item in playState._grpItems) {
 				if (FlxG.overlap(this, item)) {
 					ConsoleUtil.log("Overlaped with: " + item.name);

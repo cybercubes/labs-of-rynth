@@ -23,8 +23,9 @@ class Monster extends Actor {
 	public var seesPlayer:Bool = false;
 	public var playerPos(default, null):FlxPoint;
 	public var etype(default, null):Int;
-
 	public var distance:Float; // distance between monster and player
+
+	public static var sharedBullets:FlxTypedGroup<Projectile>;
 
 	public function new(?X:Float = 0, ?Y:Float = 0, EType:Int) {
 		super(X, Y);
@@ -53,17 +54,6 @@ class Monster extends Actor {
 		weapon.owner = this;
 		weapons.add(weapon);
 		indexOfselectedWeapon = 0;
-
-		bullets = new FlxTypedGroup(50);
-		var bullet:Projectile;
-
-		// Create 10 bullets for the player to recycle
-		for (i in 0...bullets.maxSize) {
-			// Instantiate a new sprite offscreen
-			bullet = new Projectile();
-			// Add it to the group of player bullets
-			bullets.add(bullet);
-		}
 	}
 
 	override public function draw():Void {
@@ -94,6 +84,20 @@ class Monster extends Actor {
 		super.draw();
 	}
 
+	public static function loadBullets():FlxTypedGroup<Projectile> {
+		var localBullets:FlxTypedGroup<Projectile> = new FlxTypedGroup<Projectile>(50);
+
+		// Create 10 bullets for the player to recycle
+		for (i in 0...localBullets.maxSize) {
+			// Instantiate a new sprite offscreen
+			var bullet:Projectile = new Projectile();
+			// Add it to the group of player bullets
+			localBullets.add(bullet);
+		}
+
+		return localBullets;
+	}
+
 	public function findPlayer(p:Player):Void // finds distance between monster and the player
 	{
 		var cat1:Float = p.x - this.x;
@@ -108,12 +112,12 @@ class Monster extends Actor {
 		}
 	}
 
-	public function findPathToPlayer(walls:FlxTilemap, p:Player):Void{
-		if(!seesPlayer){
+	public function findPathToPlayer(walls:FlxTilemap, p:Player):Void {
+		if (!seesPlayer) {
 			var faceAngle:Float = MathUtils.toDegrees(FlxAngle.angleBetween(this, p, true));
 			var rowAngle:Float = faceAngle - 90;
-			var firstPoint:FlxPoint = new FlxPoint(0,0);
-			var childPoint:FlxPoint = new FlxPoint(0,0);
+			var firstPoint:FlxPoint = new FlxPoint(0, 0);
+			var childPoint:FlxPoint = new FlxPoint(0, 0);
 			var interval:Float = 1;
 			var numberOfPoints:Int = 200;
 			var dX:Float = interval * Math.sin(MathUtils.toRads(90 - rowAngle));
@@ -124,20 +128,20 @@ class Monster extends Actor {
 			firstPoint.x = (numberOfPoints / 2 * dX) + (p.x * xIncrementSign);
 			firstPoint.y = (numberOfPoints / 2 * dY) + (p.y * yIncrementSign);
 
-			for (i in 1...numberOfPoints){
-				if (i == 1){
-					if(walls.ray(this.getMidpoint(), firstPoint)){
-						if(walls.ray(firstPoint, p.getMidpoint())){
+			for (i in 1...numberOfPoints) {
+				if (i == 1) {
+					if (walls.ray(this.getMidpoint(), firstPoint)) {
+						if (walls.ray(firstPoint, p.getMidpoint())) {
 							FlxVelocity.moveTowardsPoint(this, firstPoint, Std.int(speed));
 							break;
 						}
 					}
-				}else{
+				} else {
 					childPoint.x = firstPoint.x * (dX * xIncrementSign * i);
 					childPoint.y = firstPoint.y * (dY * yIncrementSign * i);
 
-					if(walls.ray(this.getMidpoint(), childPoint)){
-						if(walls.ray(childPoint, p.getMidpoint())){
+					if (walls.ray(this.getMidpoint(), childPoint)) {
+						if (walls.ray(childPoint, p.getMidpoint())) {
 							FlxVelocity.moveTowardsPoint(this, childPoint, Std.int(speed));
 							break;
 						}

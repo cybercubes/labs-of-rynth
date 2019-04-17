@@ -21,12 +21,12 @@ class Actor extends FlxSprite {
 	public var mA:Float;
 	public var indexOfselectedWeapon:Int;
 	public var isPlayer:Bool;
+	
 	public var bullets:FlxTypedGroup<Projectile>;
 
+	// Buffable properties
 	public static inline var SPEED = "speed";
 	public static inline var HEALTH = "health";
-
-	var playState:PlayState;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
@@ -48,8 +48,6 @@ class Actor extends FlxSprite {
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
-		playState = cast FlxG.state;
-		FlxG.collide(this, playState._mWalls);
 	}
 
 	public static function takeDamage(p:Projectile, a:Actor):Void {

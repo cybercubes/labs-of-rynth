@@ -1,5 +1,6 @@
 package item.active.weapon;
 
+import actors.brain.Monster;
 import flixel.math.FlxAngle;
 import actors.Actor;
 import flixel.FlxG;
@@ -17,7 +18,6 @@ class Weapon extends ActiveItem {
 
 	public function new(X:Float = 0, Y:Float = 0, name:String, damage:Int, speed:Float, recoilForce:Float, typeOfShooting:String, bulletsToShoot:Int,
 			sizeOfBarrel:FlxBounds<Float>) {
-
 		super(X, Y);
 		isWeapon = true;
 		this.name = name;
@@ -48,11 +48,12 @@ class Weapon extends ActiveItem {
 		for (i in 0...bulletsToShoot) {
 			var bullet:Projectile;
 			var finalAngle:Float;
-			bullet = actor.bullets.recycle();
 
 			if (actor.isPlayer) {
+				bullet = actor.bullets.recycle();
 				finalAngle = FlxAngle.angleBetweenMouse(actor, true);
 			} else {
+				bullet = Monster.sharedBullets.recycle();
 				finalAngle = FlxAngle.angleBetween(actor, playState._player, true);
 			}
 
