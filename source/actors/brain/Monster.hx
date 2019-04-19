@@ -1,5 +1,6 @@
 package actors.brain;
 
+import item.passive.Projectiles;
 import flixel.tile.FlxTilemap;
 import item.passive.Projectile;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -7,7 +8,6 @@ import item.active.weapon.TypeOfShooting;
 import item.active.weapon.Weapon;
 import flixel.math.FlxVelocity;
 import flixel.FlxObject;
-import flixel.util.helpers.FlxBounds;
 import flixel.math.FlxPoint;
 import actors.Player;
 import utils.MathUtils;
@@ -25,7 +25,7 @@ class Monster extends Actor {
 	public var etype(default, null):Int;
 	public var distance:Float; // distance between monster and player
 
-	public static var sharedBullets:FlxTypedGroup<Projectile>;
+	// public static var sharedBullets:FlxTypedGroup<Projectile>;
 
 	public function new(?X:Float = 0, ?Y:Float = 0, EType:Int) {
 		super(X, Y);
@@ -48,7 +48,7 @@ class Monster extends Actor {
 		_idleTmr = 0;
 		playerPos = FlxPoint.get();
 
-		var weapon = new Weapon(x, y, "pistol", 50, 0.5, 70, TypeOfShooting.STRAIGHT, 1, new FlxBounds<Float>(6, 6));
+		var weapon = new Weapon(x, y, "pistol", 50, 0.5, 70, TypeOfShooting.STRAIGHT, 1, Projectiles.SMALL);
 		weapon.visible = false;
 		weapon.alive = false;
 		weapon.owner = this;
@@ -82,20 +82,6 @@ class Monster extends Actor {
 			}
 		}
 		super.draw();
-	}
-
-	public static function loadBullets():FlxTypedGroup<Projectile> {
-		var localBullets:FlxTypedGroup<Projectile> = new FlxTypedGroup<Projectile>(50);
-
-		// Create 10 bullets for the player to recycle
-		for (i in 0...localBullets.maxSize) {
-			// Instantiate a new sprite offscreen
-			var bullet:Projectile = new Projectile();
-			// Add it to the group of player bullets
-			localBullets.add(bullet);
-		}
-
-		return localBullets;
 	}
 
 	public function findPlayer(p:Player):Void // finds distance between monster and the player

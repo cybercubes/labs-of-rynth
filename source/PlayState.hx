@@ -1,5 +1,6 @@
 package;
 
+import item.passive.Projectiles;
 import actors.Actor;
 import item.passive.Projectile;
 import flixel.util.FlxColor;
@@ -15,7 +16,6 @@ import item.BaseItem;
 import item.active.ConsumableItem;
 import item.active.weapon.Weapon;
 import item.active.weapon.TypeOfShooting;
-import flixel.util.helpers.FlxBounds;
 
 class PlayState extends FlxState {
 	public var _map:FlxOgmoLoader;
@@ -23,6 +23,7 @@ class PlayState extends FlxState {
 	public var _grpItems:FlxTypedGroup<BaseItem>;
 	public var _monsterS:FlxTypedGroup<Monster>;
 	public var _player:Player;
+	public var _actors:FlxTypedGroup<Actor>;
 
 	// SubStates
 	var pauseSubState:PauseState;
@@ -47,21 +48,27 @@ class PlayState extends FlxState {
 		_monsterS = new FlxTypedGroup<Monster>();
 		_grpItems = new FlxTypedGroup<BaseItem>();
 		_player = new Player();
+		_actors = new FlxTypedGroup<Actor>();
+		Projectiles.fill();
 		_map.loadEntities(placeEntities, "entities");
 
 		add(_mWalls);
 		add(_grpItems);
-		add(_player);
-		add(_player.healthBar);
-		add(_player.bullets);
 
-		add(_monsterS);
 		for (monster in _monsterS) {
-			add(monster.healthBar);
-			add(monster.weapons);
+			_actors.add(monster);
 		}
-		Monster.sharedBullets = Monster.loadBullets();
-		add(Monster.sharedBullets);
+
+		_actors.add(_player);
+		add(_actors);
+		for (actor in _actors) {
+			add(actor.healthBar);
+			if (!actor.isPlayer) {
+				add(actor.weapons);
+			}
+		}
+
+		add(Projectiles.ALL);
 
 		FlxG.camera.follow(_player, TOPDOWN, 1);
 	}
@@ -69,14 +76,9 @@ class PlayState extends FlxState {
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		FlxG.collide(_player, _mWalls);
-		FlxG.collide(_monsterS, _mWalls);
-
-		FlxG.collide(_player.bullets, _mWalls, Projectile.collide);
-		FlxG.collide(Monster.sharedBullets, _mWalls, Projectile.collide);
-
-		FlxG.overlap(_player.bullets, _monsterS, Actor.takeDamage);
-		FlxG.overlap(Monster.sharedBullets, _player, Actor.takeDamage);
+		FlxG.collide(_actors, _mWalls);
+		FlxG.collide(Projectiles.ALL, _mWalls, Projectile.collide);
+		FlxG.overlap(Projectiles.ALL, _actors, Actor.takeDamage);
 
 		_monsterS.forEachAlive(checkEnemyVision);
 
@@ -123,11 +125,11 @@ class PlayState extends FlxState {
 				case "elixirOfSpeed":
 					_grpItems.add(new ConsumableItem(x, y, name));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 2, 0.5, 70, TypeOfShooting.STRAIGHT, 1, new FlxBounds<Float>(4, 4)));
+					_grpItems.add(new Weapon(x, y, name, 2, 0.2, 70, TypeOfShooting.STRAIGHT, 1, Projectiles.SMALL));
 				case "shotgun":
-					_grpItems.add(new Weapon(x, y, name, 25, 1, 70, TypeOfShooting.STRAIGHT, 20, new FlxBounds<Float>(4, 4), 30));
+					_grpItems.add(new Weapon(x, y, name, 25, 1, 70, TypeOfShooting.STRAIGHT, 3, Projectiles.MEDIUM, 30));
 				case "wand":
-					_grpItems.add(new Weapon(x, y, name, 10, 0.5, 70, TypeOfShooting.STRAIGHT, 15, new FlxBounds<Float>(6, 6)));
+					_grpItems.add(new Weapon(x, y, name, 10, 0.5, 70, TypeOfShooting.STRAIGHT, 15, Projectiles.BIG));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));

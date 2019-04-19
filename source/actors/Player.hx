@@ -1,7 +1,5 @@
 package actors;
 
-import item.passive.Projectile;
-import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
@@ -27,16 +25,6 @@ class Player extends Actor {
 		setSize(8, 14);
 		offset.set(4, 2);
 
-		bullets = new FlxTypedGroup(50);
-		var bullet:Projectile;
-
-		// Create 10 bullets for the player to recycle
-		for (i in 0...bullets.maxSize) {
-			// Instantiate a new sprite offscreen
-			bullet = new Projectile();
-			// Add it to the group of player bullets
-			bullets.add(bullet);
-		}
 	}
 
 	override public function update(elapsed:Float):Void {
