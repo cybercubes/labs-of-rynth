@@ -53,8 +53,15 @@ class Weapon extends ActiveItem {
 
 			if (actor.isPlayer) {
 				finalAngle = FlxAngle.angleBetweenMouse(actor, true);
+				for (monster in playState._monsterS)
+				{
+					bullet.setTarget(monster);
+					bullet.setStartAngle(finalAngle);
+				}
 			} else {
 				finalAngle = FlxAngle.angleBetween(actor, playState._player, true);
+				bullet.setTarget(playState._player);
+				bullet.setStartAngle(finalAngle);
 			}
 
 			bullet.speed = recoilForce;
@@ -72,7 +79,7 @@ class Weapon extends ActiveItem {
 				}
 			}
 
-			bullet.move(finalAngle);
+			bullet.setAngle(finalAngle);
 		}
 
 		shotCooldown = 0;
