@@ -125,11 +125,11 @@ class PlayState extends FlxState {
 				case "elixirOfSpeed":
 					_grpItems.add(new ConsumableItem(x, y, name));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 2, 0.2, 70, TypeOfShooting.STRAIGHT, 1, Projectiles.SMALL));
+					_grpItems.add(new Weapon(x, y, name, 2, 0.2, 0.5, TypeOfShooting.STRAIGHT, 1, Projectiles.SMALL));
 				case "shotgun":
-					_grpItems.add(new Weapon(x, y, name, 25, 1, 70, TypeOfShooting.STRAIGHT, 3, Projectiles.MEDIUM, 30));
+					_grpItems.add(new Weapon(x, y, name, 25, 1, 0.75, TypeOfShooting.STRAIGHT, 3, Projectiles.MEDIUM, 30));
 				case "wand":
-					_grpItems.add(new Weapon(x, y, name, 10, 0.5, 70, TypeOfShooting.STRAIGHT, 15, Projectiles.BIG));
+					_grpItems.add(new Weapon(x, y, name, 10, 0.5, 1, TypeOfShooting.STRAIGHT, 15, Projectiles.BIG));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));
