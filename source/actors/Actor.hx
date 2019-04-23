@@ -1,6 +1,5 @@
 package actors;
 
-import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -21,12 +20,10 @@ class Actor extends FlxSprite {
 	public var mA:Float;
 	public var indexOfselectedWeapon:Int;
 	public var isPlayer:Bool;
-	public var bullets:FlxTypedGroup<Projectile>;
 
+	// Buffable properties
 	public static inline var SPEED = "speed";
 	public static inline var HEALTH = "health";
-
-	var playState:PlayState;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
@@ -43,21 +40,20 @@ class Actor extends FlxSprite {
 		passiveItems = new List<BaseItem>();
 
 		weapons = new FlxTypedGroup<BaseItem>(2);
-
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
-		playState = cast FlxG.state;
-		FlxG.collide(this, playState._mWalls);
 	}
 
 	public static function takeDamage(p:Projectile, a:Actor):Void {
-		p.kill();
-		a.hurt(p.damage);
+		if ((p.owner.isPlayer && !a.isPlayer) || (!p.owner.isPlayer && a.isPlayer)) {
+			p.kill();
+			a.hurt(p.damage);
 
-		if (a.health <= 0) {
-			a.healthBar.kill();
+			if (a.health <= 0) {
+				a.healthBar.kill();
+			}
 		}
 	}
 }
