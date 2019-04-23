@@ -6,6 +6,7 @@ import flixel.FlxG;
 import item.passive.PassiveItem;
 import utils.MathUtils;
 import enums.Trajectories;
+import actors.Actor;
 
 class Projectile extends PassiveItem {
 	public var _startAngle:Float;
@@ -56,6 +57,10 @@ class Projectile extends PassiveItem {
 				this.x = this.x + Math.cos(MathUtils.toRads(_angle)) * speed;
 				this.y = this.y + Math.sin(MathUtils.toRads(_angle)) * speed;
 		}
+    }
+
+	public static function collide(Object1:Projectile, Object2:FlxObject):Void {
+        Object1.kill();
     }
 
 	public function setAngle(angle:Float):Void {

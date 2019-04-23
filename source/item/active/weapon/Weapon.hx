@@ -47,6 +47,7 @@ class Weapon extends ActiveItem {
 		for (i in 0...numOfBulletsToShoot) {
 			var bullet:Projectile;
 			var finalAngle:Float;
+			var playState:PlayState = cast FlxG.state;
 			bullet = bulletsToUse.recycle();
 
 			if (actor.isPlayer) {
@@ -57,7 +58,6 @@ class Weapon extends ActiveItem {
 					bullet.setStartAngle(finalAngle);
 				}
 			} else {
-				var playState:PlayState = cast FlxG.state;
 				finalAngle = FlxAngle.angleBetween(actor, playState._player, true);
 				bullet.setTarget(playState._player);
 				bullet.setStartAngle(finalAngle);

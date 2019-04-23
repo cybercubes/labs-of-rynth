@@ -49,7 +49,7 @@ class Monster extends Actor {
 		playerPos = FlxPoint.get();
 
 
-		var weapon = new Weapon(x, y, "pistol", 50, 0.5, 70, TypeOfShooting.STRAIGHT, 1, Projectiles.SMALL);
+		var weapon = new Weapon(x, y, "pistol", 50, 0.5, 1, TypeOfShooting.STRAIGHT, 1, Projectiles.SMALL);
     
 		weapon.visible = false;
 		weapon.alive = false;
