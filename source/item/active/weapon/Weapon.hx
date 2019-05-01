@@ -1,9 +1,9 @@
 package item.active.weapon;
 
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxAngle;
 import actors.Actor;
 import flixel.FlxG;
-import flixel.util.helpers.FlxBounds;
 import item.passive.Projectile;
 
 class Weapon extends ActiveItem {
@@ -12,21 +12,23 @@ class Weapon extends ActiveItem {
 	public var recoilForce:Float;
 	public var shotCooldown:Float;
 	public var typeOfShooting:String;
-	public var bulletsToShoot:Int;
-	public var sizeOfBarrel:FlxBounds<Float>;
+	public var numOfBulletsToShoot:Int;
+	public var bulletsToUse:FlxTypedGroup<Projectile>;
+	public var spread:Int;
 
-	public function new(X:Float = 0, Y:Float = 0, Name:String, Damage:Int, Speed:Float, RecoilForce:Float, typeOfShooting:String, bulletsToShoot:Int,
-			SizeOfBarrel:FlxBounds<Float>) {
+	public function new(X:Float = 0, Y:Float = 0, name:String, damage:Int, speed:Float, recoilForce:Float, typeOfShooting:String, numOfBulletsToShoot:Int,
+			bulletsToUse:FlxTypedGroup<Projectile>, spread:Int = 360) {
 		super(X, Y);
 		isWeapon = true;
-		name = Name;
+		this.name = name;
 		loadGraphic("assets/images/active_items/weapons/" + name + ".png", false, 8, 8);
-		this.damage = Damage;
-		this.speed = Speed;
-		this.recoilForce = RecoilForce;
+		this.damage = damage;
+		this.speed = speed;
+		this.recoilForce = recoilForce;
 		this.typeOfShooting = typeOfShooting;
-		this.bulletsToShoot = bulletsToShoot;
-		this.sizeOfBarrel = SizeOfBarrel;
+		this.numOfBulletsToShoot = numOfBulletsToShoot;
+		this.bulletsToUse = bulletsToUse;
+		this.spread = spread;
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -42,36 +44,38 @@ class Weapon extends ActiveItem {
 			return false;
 		}
 
-		var playState:PlayState = cast FlxG.state;
-
-		for (i in 0...bulletsToShoot) {
+		for (i in 0...numOfBulletsToShoot) {
 			var bullet:Projectile;
 			var finalAngle:Float;
-			bullet = actor.bullets.recycle();
+			var playState:PlayState = cast FlxG.state;
+			bullet = bulletsToUse.recycle();
 
 			if (actor.isPlayer) {
 				finalAngle = FlxAngle.angleBetweenMouse(actor, true);
+				for (monster in playState._monsterS)
+				{
+					bullet.setTarget(monster);
+					bullet.setStartAngle(finalAngle);
+				}
 			} else {
 				finalAngle = FlxAngle.angleBetween(actor, playState._player, true);
+				bullet.setTarget(playState._player);
+				bullet.setStartAngle(finalAngle);
 			}
 
 			bullet.speed = recoilForce;
 			bullet.damage = damage;
-			// bullet.angleOffset = 45;
-			if (!bullet.size.equals(sizeOfBarrel)) {
-				bullet.changeSize(sizeOfBarrel);
-			}
 			bullet.reset(actor.x + actor.width / 2, actor.y);
 			bullet.owner = owner;
 
-			switch (typeOfShooting) {
-				case TypeOfShooting.SHOTGUN:
-					finalAngle = (finalAngle - 45) + (90 / (bulletsToShoot - 1) * i);
-				case TypeOfShooting.STRAIGHT:
-					finalAngle = (360 / bulletsToShoot) * i + finalAngle;
+			if (numOfBulletsToShoot != 1) {
+				switch (typeOfShooting) {
+					case TypeOfShooting.STRAIGHT:
+						finalAngle = (finalAngle - (spread / 2)) + (spread / (numOfBulletsToShoot - 1) * i);
+				}
 			}
 
-			bullet.move(finalAngle);
+			bullet.setAngle(finalAngle);
 		}
 
 		shotCooldown = 0;

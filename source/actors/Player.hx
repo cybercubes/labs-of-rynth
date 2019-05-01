@@ -12,17 +12,15 @@ import flixel.system.debug.console.ConsoleUtil;
 import item.BaseItem;
 
 class Player extends Actor {
-	var hud:InGameHud;
 
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
 		isPlayer = true;
-		health = 100;
+		health = 50;
+		speed = 75;
 
 		healthBar = new FlxBar(2, 2, FlxBarFillDirection.LEFT_TO_RIGHT, 50, 6, this, "health");
 		healthBar.scrollFactor.set(0,0);
-
-		speed = 150;
 
 		loadGraphic(AssetPaths.player__png, true, 16, 16);
 
@@ -34,16 +32,6 @@ class Player extends Actor {
 		setSize(8, 14);
 		offset.set(4, 2);
 
-		bullets = new FlxTypedGroup(50);
-		var bullet:Projectile;
-
-		// Create 10 bullets for the player to recycle
-		for (i in 0...bullets.maxSize) {
-			// Instantiate a new sprite offscreen
-			bullet = new Projectile();
-			// Add it to the group of player bullets
-			bullets.add(bullet);
-		}
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -60,6 +48,7 @@ class Player extends Actor {
         }
 
 		if (FlxG.keys.justPressed.E) {
+			var playState:PlayState = cast FlxG.state;
 			for (item in playState._grpItems) {
 				if (FlxG.overlap(this, item)) {
 					ConsoleUtil.log("Overlaped with: " + item.name);
@@ -139,7 +128,7 @@ class Player extends Actor {
 			}
 		} else if (FlxG.mouse.pressed) {
 			if (weapons.length > 0) {
-				if (selectedWeapon.onUse(this)) {
+				if (weapons.members[indexOfselectedWeapon].onUse(this)) {
 					ConsoleUtil.log("Fired!");
 				} else {
 					ConsoleUtil.log("Not fired!");
@@ -178,30 +167,29 @@ class Player extends Actor {
 		if (exists && alive) {
 			I.alive = false;
 			I.visible = false;
-            I.setPosition(0,0);
-            I.owner = this;
-            if (I.isActive) {
-                if (I.isWeapon) {
-                    if (weapons.members.length == weapons.maxSize) {
-                        ConsoleUtil.log("DROP: " + selectedWeapon.name);
+			I.setPosition(0, 0);
+			I.owner = this;
+			if (I.isActive) {
+				if (I.isWeapon) {
+					if (weapons.members.length == weapons.maxSize) {
+						ConsoleUtil.log("DROP: " + weapons.members[indexOfselectedWeapon].name);
 
-                        selectedWeapon.alive = true;
-                        selectedWeapon.visible = true;
-                        selectedWeapon.setPosition(x, y);
-                        selectedWeapon.scrollFactor.set(1,1);
+						weapons.members[indexOfselectedWeapon].alive = true;
+						weapons.members[indexOfselectedWeapon].visible = true;
+						weapons.members[indexOfselectedWeapon].setPosition(x, y);
+						weapons.members[indexOfselectedWeapon].scrollFactor.set(1,1);
 
-                        var indexOfSelectedWeapon = weapons.members.indexOf(selectedWeapon);
-                        weapons.members[indexOfSelectedWeapon] = I;
-                    } else {
-                        weapons.add(I);
-                    }
-                    selectedWeapon = I;
-                } else {
-                    activeItems.add(I);
-                }
-            } else {
-                passiveItems.add(I);
-            }
+						weapons.members[indexOfselectedWeapon] = I;
+					} else {
+						weapons.add(I);
+					}
+					indexOfselectedWeapon = weapons.members.indexOf(I);
+				} else {
+					activeItems.add(I);
+				}
+			} else {
+				passiveItems.add(I);
+			}
 		}
 	}
 
@@ -243,12 +231,12 @@ class Player extends Actor {
 
 	function selectWeapon():Void {
 		if (FlxG.keys.justPressed.ONE) {
-			selectedWeapon = weapons.members[0];
+			indexOfselectedWeapon = 0;
 		} else if (FlxG.keys.justPressed.TWO) {
 			if (weapons.length == 1) {
 				return;
 			}
-			selectedWeapon = weapons.members[1];
+			indexOfselectedWeapon = 1;
 		}
     }
 }
