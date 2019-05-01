@@ -1,10 +1,6 @@
 package actors;
 
-import flixel.util.FlxColor;
-import flixel.FlxSprite;
 import flixel.ui.FlxBar;
-import item.passive.Projectile;
-import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
@@ -212,21 +208,22 @@ class Player extends Actor {
 
         for (item in weapons)
         {
-            if (item == selectedWeapon)
+            if (item == weapons.members[indexOfselectedWeapon])
             {
                 I.visible = true;
                 I.setPosition(2,10);
+				I.scale.set(1.5,1.5);
                 //I.setPosition(100,150);
             } else
             {
                 I.visible = true;
                 I.setPosition(2,50);
-               // I.scale.set(0.5,0.5);
+               	I.scale.set(0.5,0.5);
                 //I.setPosition(100,165);
             }
         }
 
-        selectedWeapon.scrollFactor.set(0,0);
+		weapons.members[indexOfselectedWeapon].scrollFactor.set(0,0);
     }
 
 	function selectWeapon():Void {
