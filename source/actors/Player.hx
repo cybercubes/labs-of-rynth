@@ -1,5 +1,7 @@
 package actors;
 
+import flixel.util.FlxColor;
+import flixel.FlxSprite;
 import flixel.ui.FlxBar;
 import item.passive.Projectile;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -51,12 +53,19 @@ class Player extends Actor {
 		useActiveItem();
 		selectWeapon();
 
+        if (FlxG.keys.pressed.R)
+        {
+            trace(weapons.members[0].name + " First weapon");
+            trace(weapons.members[1].name + " Second weapon");
+        }
+
 		if (FlxG.keys.justPressed.E) {
 			for (item in playState._grpItems) {
 				if (FlxG.overlap(this, item)) {
 					ConsoleUtil.log("Overlaped with: " + item.name);
 					if (item.isPickable()) {
 						pickUpAnItem(item);
+                        weaponHUD(item);
 						break;
 					}
 				}
@@ -169,31 +178,68 @@ class Player extends Actor {
 		if (exists && alive) {
 			I.alive = false;
 			I.visible = false;
-			I.setPosition(0, 0);
-			I.owner = this;
-			if (I.isActive) {
-				if (I.isWeapon) {
-					if (weapons.members.length == weapons.maxSize) {
-						ConsoleUtil.log("DROP: " + selectedWeapon.name);
+            I.setPosition(0,0);
+            I.owner = this;
+            if (I.isActive) {
+                if (I.isWeapon) {
+                    if (weapons.members.length == weapons.maxSize) {
+                        ConsoleUtil.log("DROP: " + selectedWeapon.name);
 
-						selectedWeapon.alive = true;
-						selectedWeapon.visible = true;
-						selectedWeapon.setPosition(x, y);
+                        selectedWeapon.alive = true;
+                        selectedWeapon.visible = true;
+                        selectedWeapon.setPosition(x, y);
+                        selectedWeapon.scrollFactor.set(1,1);
 
-						var indexOfSelectedWeapon = weapons.members.indexOf(selectedWeapon);
-						weapons.members[indexOfSelectedWeapon] = I;
-					} else {
-						weapons.add(I);
-					}
-					selectedWeapon = I;
-				} else {
-					activeItems.add(I);
-				}
-			} else {
-				passiveItems.add(I);
-			}
+                        var indexOfSelectedWeapon = weapons.members.indexOf(selectedWeapon);
+                        weapons.members[indexOfSelectedWeapon] = I;
+                    } else {
+                        weapons.add(I);
+                    }
+                    selectedWeapon = I;
+                } else {
+                    activeItems.add(I);
+                }
+            } else {
+                passiveItems.add(I);
+            }
 		}
 	}
+
+    function weaponHUD(I:BaseItem):Void
+    {
+       /* if (I.isWeapon && selectedWeapon == weapons.members[0])
+        {
+            I.visible = true;
+            I.setPosition(2,10);
+            //I.setPosition(100,150);
+        }
+
+        if (I.isWeapon && selectedWeapon == weapons.members[1])
+        {
+            I.visible = true;
+            I.setPosition(0,15);
+            I.scale.set(0.5,0.5);
+            //I.setPosition(100,165);
+        }*/
+
+        for (item in weapons)
+        {
+            if (item == selectedWeapon)
+            {
+                I.visible = true;
+                I.setPosition(2,10);
+                //I.setPosition(100,150);
+            } else
+            {
+                I.visible = true;
+                I.setPosition(2,50);
+               // I.scale.set(0.5,0.5);
+                //I.setPosition(100,165);
+            }
+        }
+
+        selectedWeapon.scrollFactor.set(0,0);
+    }
 
 	function selectWeapon():Void {
 		if (FlxG.keys.justPressed.ONE) {
@@ -204,5 +250,5 @@ class Player extends Actor {
 			}
 			selectedWeapon = weapons.members[1];
 		}
-	}
+    }
 }
