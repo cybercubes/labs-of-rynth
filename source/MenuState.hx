@@ -67,6 +67,6 @@ class MenuState extends FlxState
 
     function clickexit():Void
     {
-        System.exit(0);
+        //System.exit(0);
     }
 }
