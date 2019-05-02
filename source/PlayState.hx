@@ -71,6 +71,8 @@ class PlayState extends FlxState {
 		add(Projectiles.ALL);
 
 		FlxG.camera.follow(_player, TOPDOWN, 1);
+
+		FlxG.camera.fade(FlxColor.BLACK, .33, true);
 	}
 
 	override public function update(elapsed:Float):Void {
