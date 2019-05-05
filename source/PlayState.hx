@@ -81,6 +81,7 @@ class PlayState extends FlxState {
 		FlxG.collide(_actors, _mWalls);
 		FlxG.collide(Projectiles.ALL, _mWalls, Projectile.collide);
 		FlxG.overlap(Projectiles.ALL, _actors, Actor.takeDamage);
+		
 
 		_monsterS.forEachAlive(checkEnemyVision);
 
@@ -96,7 +97,6 @@ class PlayState extends FlxState {
 		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())) {
 			e.seesPlayer = true;
 			e.attackBegin = true;
-			// e.idle();
 		} else {
 			e.seesPlayer = false;
 			e.attackBegin = false;

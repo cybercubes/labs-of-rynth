@@ -19,11 +19,14 @@ class Monster extends Actor {
 	private var _idleTmr:Float;
 	private var _moveDir:Float;
 
+	public var onWayToPoint:Bool = false;
 	public var attackBegin:Bool = false;
 	public var seesPlayer:Bool = false;
 	public var playerPos(default, null):FlxPoint;
 	public var etype(default, null):Int;
 	public var distance:Float; // distance between monster and player
+
+	private var goGoPoint:FlxPoint = new FlxPoint(452, 224);
 
 	// public static var sharedBullets:FlxTypedGroup<Projectile>;
 
@@ -36,7 +39,7 @@ class Monster extends Actor {
 		animation.add("lr", [3, 4, 3, 5], 6, false);
 		animation.add("u", [6, 7, 6, 8], 6, false);
 
-		speed = 1;
+		speed = 50;
 
 		health = 100;
 
@@ -94,7 +97,7 @@ class Monster extends Actor {
 		distance = Math.sqrt((cat2 * cat2) + (cat1 * cat1));
 	}
 
-	public function idle():Void {
+	public function chase():Void {
 		if (seesPlayer) {
 			FlxVelocity.moveTowardsPoint(this, playerPos, Std.int(speed));
 		}
@@ -102,46 +105,92 @@ class Monster extends Actor {
 
 	public function findPathToPlayer(walls:FlxTilemap, p:Player):Void {
 		if (!seesPlayer) {
-			var faceAngle:Float = MathUtils.toDegrees(FlxAngle.angleBetween(this, p, true));
-			var rowAngle:Float = faceAngle - 90;
-			var firstPoint:FlxPoint = new FlxPoint(0, 0);
-			var childPoint:FlxPoint = new FlxPoint(0, 0);
-			var interval:Float = 1;
-			var numberOfPoints:Int = 200;
-			var dX:Float = interval * Math.sin(MathUtils.toRads(90 - rowAngle));
-			var dY:Float = interval * Math.sin(MathUtils.toRads(rowAngle));
-			var xIncrementSign:Float = Math.abs(Math.cos(MathUtils.toRads(faceAngle))) / Math.cos(MathUtils.toRads(faceAngle));
-			var yIncrementSign:Float = Math.abs(Math.sin(MathUtils.toRads(faceAngle))) / Math.sin(MathUtils.toRads(faceAngle));
+			if (!onWayToPoint) {
+				var faceAngle:Float = MathUtils.toDegrees(FlxAngle.angleBetween(this, p, true));
+				var rowAngle:Float = faceAngle - 90;
+				var monsterfirstPoint:FlxPoint = new FlxPoint(0, 0);
+				var monsterchildPoint:FlxPoint = new FlxPoint(0, 0);
+				var playerfirstPoint:FlxPoint = new FlxPoint(0, 0);
+				var playerchildPoint:FlxPoint = new FlxPoint(0, 0);
+				var interval:Float = 1;
+				var numberOfPoints:Int = 20;
+				var dX:Float = interval * Math.sin(MathUtils.toRads((90-rowAngle)));
+				var dY:Float = interval * Math.sin(MathUtils.toRads(rowAngle));
+				var xIncrementSign:Float = Math.abs(Math.cos(MathUtils.toRads(faceAngle))) / Math.cos(MathUtils.toRads(faceAngle));
+				var yIncrementSign:Float = Math.abs(Math.sin(MathUtils.toRads(faceAngle))) / Math.sin(MathUtils.toRads(faceAngle));
 
-			firstPoint.x = (numberOfPoints / 2 * dX) + (p.x * xIncrementSign);
-			firstPoint.y = (numberOfPoints / 2 * dY) + (p.y * yIncrementSign);
+				monsterfirstPoint.x = (numberOfPoints / 2 * dX) + (this.x * xIncrementSign);
+				monsterfirstPoint.y = (numberOfPoints / 2 * dY) + (this.y * yIncrementSign);
 
-			for (i in 1...numberOfPoints) {
-				if (i == 1) {
-					if (walls.ray(this.getMidpoint(), firstPoint)) {
-						if (walls.ray(firstPoint, p.getMidpoint())) {
-							FlxVelocity.moveTowardsPoint(this, firstPoint, Std.int(speed));
-							break;
+				playerfirstPoint.x = (numberOfPoints / 2 * dX) + (p.x * xIncrementSign);
+				playerfirstPoint.y = (numberOfPoints / 2 * dY) + (p.y * yIncrementSign);
+
+			
+				for (i in 1...numberOfPoints) {
+					if (i == 1) {
+						if (walls.ray(this.getMidpoint(), playerfirstPoint)) {
+							if (walls.ray(playerfirstPoint, p.getMidpoint())) {
+								//FlxVelocity.moveTowardsPoint(this, playerfirstPoint, Std.int(speed));
+								goGoPoint.x = playerfirstPoint.x;
+								goGoPoint.y = playerfirstPoint.y;
+								
+							}
+						} else {
+							if (walls.ray(this.getMidpoint(), monsterfirstPoint)) {
+								if (walls.ray(monsterfirstPoint, playerfirstPoint)) {
+									if (walls.ray(playerfirstPoint, p.getMidpoint())) {
+										//FlxVelocity.moveTowardsPoint(this, monsterfirstPoint, Std.int(speed));
+										//FlxVelocity.moveTowardsPoint(this, playerfirstPoint, Std.int(speed));
+										goGoPoint.x = monsterfirstPoint.x;
+										goGoPoint.y = monsterfirstPoint.y;
+										
+									}
+								}
+							}
+						}
+					} else {
+						monsterchildPoint.x = monsterfirstPoint.x * (dX * xIncrementSign * i);
+						monsterchildPoint.y = monsterfirstPoint.y * (dY * yIncrementSign * i);
+
+						playerchildPoint.x = playerfirstPoint.x * (dX * xIncrementSign * i);
+						playerchildPoint.y = playerfirstPoint.y * (dY * yIncrementSign * i);
+
+						if (walls.ray(this.getMidpoint(), playerchildPoint)) {
+							if (walls.ray(playerchildPoint, p.getMidpoint())) {
+								//FlxVelocity.moveTowardsPoint(this, playerchildPoint, Std.int(speed));
+								goGoPoint.x = playerchildPoint.x;
+								goGoPoint.y = playerchildPoint.y;
+								
+							}
+						} else {
+							if (walls.ray(this.getMidpoint(), monsterchildPoint)) {
+								if (walls.ray(monsterchildPoint, playerchildPoint)) {
+									if (walls.ray(playerchildPoint, p.getMidpoint())) {
+										//FlxVelocity.moveTowardsPoint(this, monsterchildPoint, Std.int(speed));
+										//FlxVelocity.moveTowardsPoint(this, playerchildPoint, Std.int(speed));
+										goGoPoint.x = monsterchildPoint.x;
+										goGoPoint.y = monsterchildPoint.y;
+										
+									}
+								}
+							}
 						}
 					}
-				} else {
-					childPoint.x = firstPoint.x * (dX * xIncrementSign * i);
-					childPoint.y = firstPoint.y * (dY * yIncrementSign * i);
-
-					if (walls.ray(this.getMidpoint(), childPoint)) {
-						if (walls.ray(childPoint, p.getMidpoint())) {
-							FlxVelocity.moveTowardsPoint(this, childPoint, Std.int(speed));
-							break;
-						}
-					}
+					FlxVelocity.moveTowardsPoint(this, goGoPoint, Std.int(speed));
+					//onWayToPoint = true;
 				}
+			}else{ 
+				if (this.x == goGoPoint.x && this.y == goGoPoint.y) {
+					onWayToPoint = false;
+				}
+				
 			}
 		}
 	}
 
 	override public function update(elapsed:Float):Void {
 		attack();
-		idle();
+		chase();
 		super.update(elapsed);
 	}
 
