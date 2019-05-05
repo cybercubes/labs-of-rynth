@@ -11,8 +11,8 @@ class Player extends Actor {
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
 		isPlayer = true;
-		health = 50;
-		speed = 75;
+		health = 10000000000000000000;
+		speed = 150;
 
 
 		loadGraphic(AssetPaths.player__png, true, 16, 16);
