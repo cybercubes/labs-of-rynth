@@ -13,13 +13,14 @@ class Weapon extends ActiveItem {
 	public var recoilForce:Float;
 	public var shotCooldown:Float;
 	public var typeOfShooting:String;
+	public var trajectory:String;
 	public var numOfBulletsToShoot:Int;
 	public var bulletsToUse:FlxTypedGroup<Projectile>;
 	// public var buffsToPass:List<Buff> = new List<Buff>();
 	public var spread:Int;
 
-	public function new(X:Float = 0, Y:Float = 0, name:String, damage:Int, speed:Float, recoilForce:Float, typeOfShooting:String, numOfBulletsToShoot:Int,
-			bulletsToUse:FlxTypedGroup<Projectile>, ?buffsToPass:List<Buff>, spread:Int = 360) {
+	public function new(X:Float = 0, Y:Float = 0, name:String, damage:Int, speed:Float, recoilForce:Float, typeOfShooting:String, trajectory:String,
+			numOfBulletsToShoot:Int, bulletsToUse:FlxTypedGroup<Projectile>, ?buffsToPass:List<Buff>, spread:Int = 360) {
 		super(X, Y);
 		isWeapon = true;
 		this.name = name;
@@ -28,6 +29,7 @@ class Weapon extends ActiveItem {
 		this.speed = speed;
 		this.recoilForce = recoilForce;
 		this.typeOfShooting = typeOfShooting;
+		this.trajectory = trajectory;
 		this.numOfBulletsToShoot = numOfBulletsToShoot;
 		this.bulletsToUse = bulletsToUse;
 		if (buffsToPass != null) {
@@ -83,6 +85,7 @@ class Weapon extends ActiveItem {
 			}
 
 			bullet.setAngle(finalAngle);
+			bullet.setTrajectory(trajectory);
 		}
 
 		shotCooldown = 0;

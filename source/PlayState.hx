@@ -18,6 +18,7 @@ import item.active.weapon.Weapon;
 import item.active.weapon.TypeOfShooting;
 import buffs.Buff;
 import buffs.Buffs;
+import enums.Trajectories;
 
 class PlayState extends FlxState {
 	public var _map:FlxOgmoLoader;
@@ -73,6 +74,8 @@ class PlayState extends FlxState {
 		add(Projectiles.ALL);
 
 		FlxG.camera.follow(_player, TOPDOWN, 1);
+
+		FlxG.camera.fade(FlxColor.BLACK, .33, true);
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -81,6 +84,7 @@ class PlayState extends FlxState {
 		FlxG.collide(_actors, _mWalls);
 		FlxG.collide(Projectiles.ALL, _mWalls, Projectile.collide);
 		FlxG.overlap(Projectiles.ALL, _actors, Actor.takeDamage);
+		
 
 		_monsterS.forEachAlive(checkEnemyVision);
 
@@ -96,7 +100,6 @@ class PlayState extends FlxState {
 		if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint())) {
 			e.seesPlayer = true;
 			e.attackBegin = true;
-			// e.idle();
 		} else {
 			e.seesPlayer = false;
 			e.attackBegin = false;
@@ -127,13 +130,11 @@ class PlayState extends FlxState {
 				case "elixirOfSpeed":
 					_grpItems.add(new ConsumableItem(x, y, name));
 				case "pistol":
-					_grpItems.add(new Weapon(x, y, name, 2, 0.2, 0.5, TypeOfShooting.STRAIGHT, 1, Projectiles.SMALL));
+					_grpItems.add(new Weapon(x, y, name, 2, 0.2, 4, TypeOfShooting.STRAIGHT, Trajectories.STRAIGHT,  1, Projectiles.SMALL));
 				case "shotgun":
-					_grpItems.add(new Weapon(x, y, name, 25, 1, 0.75, TypeOfShooting.STRAIGHT, 3, Projectiles.MEDIUM, 30));
+					_grpItems.add(new Weapon(x, y, name, 25, 1, 3, TypeOfShooting.STRAIGHT, Trajectories.STRAIGHT,  3, Projectiles.MEDIUM, 30));
 				case "wand":
-					var buffsToPass:List<Buff> = new List<Buff>();
-					buffsToPass.add(Buffs.SLOWDOWN);
-					_grpItems.add(new Weapon(x, y, name, 2, 0.5, 1, TypeOfShooting.STRAIGHT, 15, Projectiles.BIG, buffsToPass));
+					_grpItems.add(new Weapon(x, y, name, 10, 0.5, 1, TypeOfShooting.STRAIGHT, Trajectories.BURST, 15, Projectiles.BIG));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));

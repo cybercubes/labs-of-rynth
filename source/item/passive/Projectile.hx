@@ -10,14 +10,14 @@ import actors.Actor;
 
 class Projectile extends PassiveItem {
 	public var _startAngle:Float;
-	public var _angle:Float = 0; // current direction of the projectile in question
-	public var _target:Actor; // target for the homing trajectory towards which the bullet will adjust its angle
-	// public var buffsToPass:List<Buff> = new List<Buff>();
+	public var _angle:Float = 0; //current direction of the projectile in question
+	public var _target:Actor; //target for the homing trajectory towards which the bullet will adjust its angle
+	public var _trajectory:String;
+
 	public var speed:Float;
 	public var lifespan:Float;
 	public var damage:Int;
 	public var angleOffset:Float = 0;
-	public var trajectory:String = Trajectories.BURST;
 
 	public function new(Width:Int, Height:Int) {
 		super(0, 0);
@@ -45,7 +45,7 @@ class Projectile extends PassiveItem {
 	}
 
 	function updatePos():Void {
-		switch (trajectory) {
+		switch (_trajectory) {
 			case Trajectories.STRAIGHT:
 				this.x = this.x + Math.cos(MathUtils.toRads(_angle)) * speed;
 				this.y = this.y + Math.sin(MathUtils.toRads(_angle)) * speed;
@@ -54,7 +54,7 @@ class Projectile extends PassiveItem {
 				this.x = this.x + (Math.cos(MathUtils.toRads(_angle)) + Math.cos(MathUtils.toRads(_startAngle))) * speed;
 				this.y = this.y + (Math.sin(MathUtils.toRads(_angle)) + Math.sin(MathUtils.toRads(_startAngle))) * speed;
 			case Trajectories.TURN:
-				_angle = _angle + 4; // TODO: change the hardcoded value to a variable that will decide how quick the bullets will rotate
+				_angle = _angle + 1; //TODO: change the hardcoded value to a variable that will decide how quick the bullets will rotate
 				this.x = this.x + Math.cos(MathUtils.toRads(_angle)) * speed;
 				this.y = this.y + Math.sin(MathUtils.toRads(_angle)) * speed;
 		}
@@ -70,6 +70,10 @@ class Projectile extends PassiveItem {
 
 	public function setStartAngle(angle:Float):Void {
 		_startAngle = angle;
+	}
+	
+	public function setTrajectory(trajectory:String):Void {
+		_trajectory = trajectory;
 	}
 
 	public function setTarget(target:Actor):Void {

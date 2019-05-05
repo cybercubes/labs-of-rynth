@@ -1,4 +1,5 @@
 package ;
+import flixel.util.FlxColor;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.FlxG;
@@ -38,12 +39,18 @@ class GameOverState extends FlxSubState
 
     function clickrestart():Void
     {
-        FlxG.switchState(new PlayState());
+        FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
+        {
+            FlxG.switchState(new PlayState());
+        });
     }
 
     function clickmain():Void
     {
-        FlxG.switchState(new MenuState());
+        FlxG.camera.fade(FlxColor.BLACK, .33, false, function()
+        {
+            FlxG.switchState(new MenuState());
+        });
     }
 
 }
