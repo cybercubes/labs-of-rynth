@@ -36,7 +36,7 @@ class Monster extends Actor {
 		animation.add("lr", [3, 4, 3, 5], 6, false);
 		animation.add("u", [6, 7, 6, 8], 6, false);
 
-		speed = 1;
+		speed = 75;
 
 		health = 100;
 
@@ -48,9 +48,8 @@ class Monster extends Actor {
 		_idleTmr = 0;
 		playerPos = FlxPoint.get();
 
+		var weapon = new Weapon(x, y, "pistol", 5, 2, 1, TypeOfShooting.STRAIGHT, 1, Projectiles.SMALL);
 
-		var weapon = new Weapon(x, y, "pistol", 50, 0.5, 1, TypeOfShooting.STRAIGHT, 1, Projectiles.SMALL);
-    
 		weapon.visible = false;
 		weapon.alive = false;
 		weapon.owner = this;

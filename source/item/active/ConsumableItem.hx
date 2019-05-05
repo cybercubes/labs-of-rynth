@@ -4,6 +4,7 @@ import actors.Actor;
 import buffs.Buffs;
 
 class ConsumableItem extends ActiveItem {
+	
 	public function new(X:Float = 0, Y:Float = 0, Name:String) {
 		super(X, Y);
 		isWeapon = false;
@@ -21,9 +22,13 @@ class ConsumableItem extends ActiveItem {
 
 		switch (name) {
 			case "elixirOfSpeed":
-				Buffs.SPEED.apply(actor);
+				Buffs.ACCELERATION.apply(actor);
 			case "elixirOfHealth":
-				Buffs.HEALTH.apply(actor);
+				Buffs.HEALING.apply(actor);
+		}
+
+		for (buff in buffsToPass) {
+
 		}
 
 		return true;

@@ -12,7 +12,7 @@ class Player extends Actor {
 		super(X, Y);
 		isPlayer = true;
 		health = 50;
-		speed = 75;
+		speed = 150;
 
 
 		loadGraphic(AssetPaths.player__png, true, 16, 16);

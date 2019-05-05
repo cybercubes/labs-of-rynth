@@ -16,6 +16,8 @@ import item.BaseItem;
 import item.active.ConsumableItem;
 import item.active.weapon.Weapon;
 import item.active.weapon.TypeOfShooting;
+import buffs.Buff;
+import buffs.Buffs;
 
 class PlayState extends FlxState {
 	public var _map:FlxOgmoLoader;
@@ -129,7 +131,9 @@ class PlayState extends FlxState {
 				case "shotgun":
 					_grpItems.add(new Weapon(x, y, name, 25, 1, 0.75, TypeOfShooting.STRAIGHT, 3, Projectiles.MEDIUM, 30));
 				case "wand":
-					_grpItems.add(new Weapon(x, y, name, 10, 0.5, 1, TypeOfShooting.STRAIGHT, 15, Projectiles.BIG));
+					var buffsToPass:List<Buff> = new List<Buff>();
+					buffsToPass.add(Buffs.SLOWDOWN);
+					_grpItems.add(new Weapon(x, y, name, 2, 0.5, 1, TypeOfShooting.STRAIGHT, 15, Projectiles.BIG, buffsToPass));
 			}
 		} else if (entityName == "monster") {
 			_monsterS.add(new Monster(x + 4, y, Std.parseInt(entityData.get("etype"))));

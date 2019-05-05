@@ -10,9 +10,9 @@ import actors.Actor;
 
 class Projectile extends PassiveItem {
 	public var _startAngle:Float;
-	public var _angle:Float = 0; //current direction of the projectile in question
-	public var _target:Actor; //target for the homing trajectory towards which the bullet will adjust its angle
-
+	public var _angle:Float = 0; // current direction of the projectile in question
+	public var _target:Actor; // target for the homing trajectory towards which the bullet will adjust its angle
+	// public var buffsToPass:List<Buff> = new List<Buff>();
 	public var speed:Float;
 	public var lifespan:Float;
 	public var damage:Int;
@@ -26,12 +26,13 @@ class Projectile extends PassiveItem {
 		if (!scale.equals(new FlxPoint(1, 1))) {
 			updateHitbox();
 		}
+
 		exists = false;
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
-		
+
 		updatePos();
 
 		if (lifespan > 0) {
@@ -49,19 +50,19 @@ class Projectile extends PassiveItem {
 				this.x = this.x + Math.cos(MathUtils.toRads(_angle)) * speed;
 				this.y = this.y + Math.sin(MathUtils.toRads(_angle)) * speed;
 			case Trajectories.BURST:
-				_angle = _angle + 4; //TODO: change the hardcoded value to a variable that will decide how quick the bullets will rotate
+				_angle = _angle + 4; // TODO: change the hardcoded value to a variable that will decide how quick the bullets will rotate
 				this.x = this.x + (Math.cos(MathUtils.toRads(_angle)) + Math.cos(MathUtils.toRads(_startAngle))) * speed;
 				this.y = this.y + (Math.sin(MathUtils.toRads(_angle)) + Math.sin(MathUtils.toRads(_startAngle))) * speed;
 			case Trajectories.TURN:
-				_angle = _angle + 4; //TODO: change the hardcoded value to a variable that will decide how quick the bullets will rotate
+				_angle = _angle + 4; // TODO: change the hardcoded value to a variable that will decide how quick the bullets will rotate
 				this.x = this.x + Math.cos(MathUtils.toRads(_angle)) * speed;
 				this.y = this.y + Math.sin(MathUtils.toRads(_angle)) * speed;
 		}
-    }
+	}
 
 	public static function collide(Object1:Projectile, Object2:FlxObject):Void {
-        Object1.kill();
-    }
+		Object1.kill();
+	}
 
 	public function setAngle(angle:Float):Void {
 		_angle = angle;
@@ -71,13 +72,11 @@ class Projectile extends PassiveItem {
 		_startAngle = angle;
 	}
 
-	public function setTarget(target:Actor):Void
-	{
+	public function setTarget(target:Actor):Void {
 		_target = target;
 	}
 
-	public function getAngle():Float
-	{
+	public function getAngle():Float {
 		return _angle;
 	}
 }

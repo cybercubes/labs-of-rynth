@@ -2,12 +2,14 @@ package item;
 
 import actors.Actor;
 import flixel.FlxSprite;
+import buffs.Buff;
 
 class BaseItem extends FlxSprite {
 	public var isActive:Bool;
 	public var isWeapon:Bool;
 	public var name:String;
 	public var owner:Actor;
+	public var buffsToPass:List<Buff> = new List<Buff>();
 
 	public function new(X:Float = 0, Y:Float = 0) {
 		super(X + 4, Y + 4);
@@ -22,10 +24,6 @@ class BaseItem extends FlxSprite {
 	}
 
 	public function isPickable():Bool {
-		if (alive) {
-			return true;
-		} else {
-			return false;
-		}
+		return alive;
 	}
 }

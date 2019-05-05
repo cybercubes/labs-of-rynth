@@ -6,12 +6,14 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.ui.FlxBar;
 import item.BaseItem;
 import item.passive.Projectile;
+import buffs.Buff;
 
 class Actor extends FlxSprite {
 	public var speed:Float;
 	public var activeItems:List<BaseItem>;
 	public var passiveItems:List<BaseItem>;
 	public var weapons:FlxTypedGroup<BaseItem>;
+	public var buffs:List<Buff>;
 	public var healthBar:FlxBar;
 	public var goesUp:Bool;
 	public var goesDown:Bool;
@@ -40,16 +42,23 @@ class Actor extends FlxSprite {
 		passiveItems = new List<BaseItem>();
 
 		weapons = new FlxTypedGroup<BaseItem>(2);
+		buffs = new List<Buff>();
 	}
 
 	override public function update(elapsed:Float):Void {
 		super.update(elapsed);
+
 	}
 
 	public static function takeDamage(p:Projectile, a:Actor):Void {
 		if ((p.owner.isPlayer && !a.isPlayer) || (!p.owner.isPlayer && a.isPlayer)) {
-			p.kill();
 			a.hurt(p.damage);
+			if (!p.buffsToPass.isEmpty()) {
+				for (buff in p.buffsToPass) {
+					buff.apply(a);
+				}
+			}
+			p.kill();
 
 			if (a.health <= 0) {
 				a.healthBar.kill();

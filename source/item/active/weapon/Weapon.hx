@@ -5,6 +5,7 @@ import flixel.math.FlxAngle;
 import actors.Actor;
 import flixel.FlxG;
 import item.passive.Projectile;
+import buffs.Buff;
 
 class Weapon extends ActiveItem {
 	public var damage:Int;
@@ -14,10 +15,11 @@ class Weapon extends ActiveItem {
 	public var typeOfShooting:String;
 	public var numOfBulletsToShoot:Int;
 	public var bulletsToUse:FlxTypedGroup<Projectile>;
+	// public var buffsToPass:List<Buff> = new List<Buff>();
 	public var spread:Int;
 
 	public function new(X:Float = 0, Y:Float = 0, name:String, damage:Int, speed:Float, recoilForce:Float, typeOfShooting:String, numOfBulletsToShoot:Int,
-			bulletsToUse:FlxTypedGroup<Projectile>, spread:Int = 360) {
+			bulletsToUse:FlxTypedGroup<Projectile>, ?buffsToPass:List<Buff>, spread:Int = 360) {
 		super(X, Y);
 		isWeapon = true;
 		this.name = name;
@@ -28,6 +30,9 @@ class Weapon extends ActiveItem {
 		this.typeOfShooting = typeOfShooting;
 		this.numOfBulletsToShoot = numOfBulletsToShoot;
 		this.bulletsToUse = bulletsToUse;
+		if (buffsToPass != null) {
+			this.buffsToPass = buffsToPass;
+		}
 		this.spread = spread;
 	}
 
@@ -52,8 +57,7 @@ class Weapon extends ActiveItem {
 
 			if (actor.isPlayer) {
 				finalAngle = FlxAngle.angleBetweenMouse(actor, true);
-				for (monster in playState._monsterS)
-				{
+				for (monster in playState._monsterS) {
 					bullet.setTarget(monster);
 					bullet.setStartAngle(finalAngle);
 				}
@@ -65,6 +69,9 @@ class Weapon extends ActiveItem {
 
 			bullet.speed = recoilForce;
 			bullet.damage = damage;
+			if (!buffsToPass.isEmpty()) {
+				bullet.buffsToPass = buffsToPass;
+			}
 			bullet.reset(actor.x + actor.width / 2, actor.y);
 			bullet.owner = owner;
 
