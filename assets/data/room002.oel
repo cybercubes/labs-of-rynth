@@ -31,7 +31,12 @@
 -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1</walls>
   <entities>
     <player id="0" x="176" y="224" />
-    <monster id="1" x="432" y="224" etype="0" />
+    <monster id="1" x="452" y="224" etype="0" />
+     <monster id="1" x="452" y="244" etype="0" />
+     <monster id="1" x="452" y="264" etype="0" />
+      <monster id="1" x="452" y="224" etype="0" />
+     <monster id="1" x="452" y="244" etype="0" />
+     <monster id="1" x="452" y="264" etype="0" />
     <item id="2" x="208" y="224" name="pistol" />
     <item id="3" x="240" y="224" name="shotgun" />
     <item id="4" x="272" y="224" name="wand" />

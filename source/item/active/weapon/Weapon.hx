@@ -12,11 +12,12 @@ class Weapon extends ActiveItem {
 	public var recoilForce:Float;
 	public var shotCooldown:Float;
 	public var typeOfShooting:String;
+	public var trajectory:String;
 	public var numOfBulletsToShoot:Int;
 	public var bulletsToUse:FlxTypedGroup<Projectile>;
 	public var spread:Int;
 
-	public function new(X:Float = 0, Y:Float = 0, name:String, damage:Int, speed:Float, recoilForce:Float, typeOfShooting:String, numOfBulletsToShoot:Int,
+	public function new(X:Float = 0, Y:Float = 0, name:String, damage:Int, speed:Float, recoilForce:Float, typeOfShooting:String, trajectory:String, numOfBulletsToShoot:Int,
 			bulletsToUse:FlxTypedGroup<Projectile>, spread:Int = 360) {
 		super(X, Y);
 		isWeapon = true;
@@ -26,6 +27,7 @@ class Weapon extends ActiveItem {
 		this.speed = speed;
 		this.recoilForce = recoilForce;
 		this.typeOfShooting = typeOfShooting;
+		this.trajectory = trajectory;
 		this.numOfBulletsToShoot = numOfBulletsToShoot;
 		this.bulletsToUse = bulletsToUse;
 		this.spread = spread;
@@ -76,6 +78,7 @@ class Weapon extends ActiveItem {
 			}
 
 			bullet.setAngle(finalAngle);
+			bullet.setTrajectory(trajectory);
 		}
 
 		shotCooldown = 0;

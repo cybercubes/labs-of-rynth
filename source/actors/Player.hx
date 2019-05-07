@@ -12,8 +12,8 @@ class Player extends Actor {
 	public function new(?X:Float = 0, ?Y:Float = 0) {
 		super(X, Y);
 		isPlayer = true;
-		health = 50;
-		speed = 75;
+		health = 10000000000000000000;
+		speed = 150;
 
 		healthBar = new FlxBar(2, 2, FlxBarFillDirection.LEFT_TO_RIGHT, 50, 6, this, "health");
 		healthBar.scrollFactor.set(0,0);
