@@ -27,7 +27,6 @@ class Player extends Actor {
 		drag.x = drag.y = 2400; // drag is a value that determines how quickly the body will slowdown
 		setSize(8, 14);
 		offset.set(4, 2);
-
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -37,12 +36,6 @@ class Player extends Actor {
 		useActiveItem();
 		selectWeapon();
 
-        if (FlxG.keys.pressed.R)
-        {
-            trace(weapons.members[0].name + " First weapon");
-            trace(weapons.members[1].name + " Second weapon");
-        }
-
 		if (FlxG.keys.justPressed.E) {
 			var playState:PlayState = cast FlxG.state;
 			for (item in playState._grpItems) {
@@ -50,11 +43,25 @@ class Player extends Actor {
 					ConsoleUtil.log("Overlaped with: " + item.name);
 					if (item.isPickable()) {
 						pickUpAnItem(item);
-                        weaponHUD(item);
 						break;
 					}
 				}
 			}
+
+			for (item in weapons)
+			{
+				if (item == weapons.members[indexOfselectedWeapon])
+				{
+					item.visible = true;
+					item.setPosition(4,11);
+					break;
+				} else
+				{
+					item.visible = true;
+					item.setPosition(4,22);
+				}
+			}
+			weapons.members[indexOfselectedWeapon].scrollFactor.set(0,0);
 		}
 	}
 
@@ -189,47 +196,14 @@ class Player extends Actor {
 		}
 	}
 
-    function weaponHUD(I:BaseItem):Void
-    {
-       /* if (I.isWeapon && selectedWeapon == weapons.members[0])
-        {
-            I.visible = true;
-            I.setPosition(2,10);
-            //I.setPosition(100,150);
-        }
-
-        if (I.isWeapon && selectedWeapon == weapons.members[1])
-        {
-            I.visible = true;
-            I.setPosition(0,15);
-            I.scale.set(0.5,0.5);
-            //I.setPosition(100,165);
-        }*/
-
-        for (item in weapons)
-        {
-            if (item == weapons.members[indexOfselectedWeapon])
-            {
-                I.visible = true;
-                I.setPosition(2,10);
-				I.scale.set(1.5,1.5);
-                //I.setPosition(100,150);
-            } else
-            {
-                I.visible = true;
-                I.setPosition(2,50);
-               	I.scale.set(0.5,0.5);
-                //I.setPosition(100,165);
-            }
-        }
-
-		weapons.members[indexOfselectedWeapon].scrollFactor.set(0,0);
-    }
-
 	function selectWeapon():Void {
 		if (FlxG.keys.justPressed.ONE) {
 			indexOfselectedWeapon = 0;
+			weapons.members[indexOfselectedWeapon].setPosition(4,11);
+			weapons.members[1].setPosition(4,22);
 		} else if (FlxG.keys.justPressed.TWO) {
+			weapons.members[indexOfselectedWeapon].setPosition(4,22);
+			weapons.members[1].setPosition(4,11);
 			if (weapons.length == 1) {
 				return;
 			}
