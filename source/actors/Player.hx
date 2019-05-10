@@ -47,21 +47,6 @@ class Player extends Actor {
 					}
 				}
 			}
-
-			for (item in weapons)
-			{
-				if (item == weapons.members[indexOfselectedWeapon])
-				{
-					item.visible = true;
-					item.setPosition(4,11);
-					break;
-				} else
-				{
-					item.visible = true;
-					item.setPosition(4,22);
-				}
-			}
-			weapons.members[indexOfselectedWeapon].scrollFactor.set(0,0);
 		}
 	}
 
@@ -194,16 +179,41 @@ class Player extends Actor {
 				passiveItems.add(I);
 			}
 		}
+
+        if (I.isWeapon)
+        {
+            for (item in weapons)
+            {
+                if (item == weapons.members[indexOfselectedWeapon])
+                {
+                    item.visible = true;
+                    item.setPosition(4,11);
+                    break;
+                } else
+                {
+                    item.visible = true;
+                    item.setPosition(4,22);
+                }
+            }
+            weapons.members[indexOfselectedWeapon].scrollFactor.set(0,0);
+        }
 	}
 
 	function selectWeapon():Void {
 		if (FlxG.keys.justPressed.ONE) {
 			indexOfselectedWeapon = 0;
-			weapons.members[indexOfselectedWeapon].setPosition(4,11);
-			weapons.members[1].setPosition(4,22);
+			if (weapons.length >= 2)
+			{
+				weapons.members[indexOfselectedWeapon].setPosition(4,11);
+				weapons.members[1].setPosition(4,22);
+			}
 		} else if (FlxG.keys.justPressed.TWO) {
+			if (weapons.length >= 2)
+			{
 			weapons.members[indexOfselectedWeapon].setPosition(4,22);
 			weapons.members[1].setPosition(4,11);
+			}
+
 			if (weapons.length == 1) {
 				return;
 			}
