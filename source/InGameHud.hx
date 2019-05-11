@@ -6,25 +6,25 @@ import flixel.FlxSprite;
 
 class InGameHud extends FlxTypedGroup<FlxSprite>
 {
-   public var trt:FlxSprite;
-    public var trt2:FlxSprite;
+   public var weaponSlot1:FlxSprite;
+    public var weaponSlot2:FlxSprite;
 
     public function new()
     {
         super();
 
-        trt = new FlxSprite().makeGraphic(18,10, FlxColor.WHITE, false);
-        trt.x = 2;
-        trt.y = 10;
-        trt.scrollFactor.set(0,0);
-        add(trt);
+        weaponSlot1 = new FlxSprite().makeGraphic(18,10, FlxColor.WHITE, false);
+        weaponSlot1.x = 2;
+        weaponSlot1.y = 10;
+        weaponSlot1.scrollFactor.set(0,0);
+        add(weaponSlot1);
 
 
-        trt2 = new FlxSprite().makeGraphic(18,10, FlxColor.WHITE, false);
-        trt2.x = 2;
-        trt2.y = 21;
-        trt2.scrollFactor.set(0,0);
-        add(trt2);
+        weaponSlot2 = new FlxSprite().makeGraphic(18,10, FlxColor.WHITE, false);
+        weaponSlot2.x = 2;
+        weaponSlot2.y = 21;
+        weaponSlot2.scrollFactor.set(0,0);
+        add(weaponSlot2);
     }
 
     override public function update(elapsed:Float):Void
