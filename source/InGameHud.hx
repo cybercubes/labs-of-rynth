@@ -9,8 +9,6 @@ class InGameHud extends FlxTypedGroup<FlxSprite>
    public var trt:FlxSprite;
     public var trt2:FlxSprite;
 
-    var weapon:Player;
-
     public function new()
     {
         super();
