@@ -1,5 +1,6 @@
 package actors;
 
+import flixel.ui.FlxBar;
 import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
@@ -14,6 +15,8 @@ class Player extends Actor {
 		health = 10000000000000000000;
 		speed = 150;
 
+		healthBar = new FlxBar(2, 2, FlxBarFillDirection.LEFT_TO_RIGHT, 50, 6, this, "health");
+		healthBar.scrollFactor.set(0,0);
 
 		loadGraphic(AssetPaths.player__png, true, 16, 16);
 
@@ -24,7 +27,6 @@ class Player extends Actor {
 		drag.x = drag.y = 2400; // drag is a value that determines how quickly the body will slowdown
 		setSize(8, 14);
 		offset.set(4, 2);
-
 	}
 
 	override public function update(elapsed:Float):Void {
@@ -163,6 +165,7 @@ class Player extends Actor {
 						weapons.members[indexOfselectedWeapon].alive = true;
 						weapons.members[indexOfselectedWeapon].visible = true;
 						weapons.members[indexOfselectedWeapon].setPosition(x, y);
+						weapons.members[indexOfselectedWeapon].scrollFactor.set(1,1);
 
 						weapons.members[indexOfselectedWeapon] = I;
 					} else {
@@ -176,16 +179,45 @@ class Player extends Actor {
 				passiveItems.add(I);
 			}
 		}
+
+        if (I.isWeapon)
+        {
+            for (item in weapons)
+            {
+                if (item == weapons.members[indexOfselectedWeapon])
+                {
+                    item.visible = true;
+                    item.setPosition(4,11);
+                    break;
+                } else
+                {
+                    item.visible = true;
+                    item.setPosition(4,22);
+                }
+            }
+            weapons.members[indexOfselectedWeapon].scrollFactor.set(0,0);
+        }
 	}
 
 	function selectWeapon():Void {
 		if (FlxG.keys.justPressed.ONE) {
 			indexOfselectedWeapon = 0;
+			if (weapons.length >= 2)
+			{
+				weapons.members[indexOfselectedWeapon].setPosition(4,11);
+				weapons.members[1].setPosition(4,22);
+			}
 		} else if (FlxG.keys.justPressed.TWO) {
+			if (weapons.length >= 2)
+			{
+			weapons.members[indexOfselectedWeapon].setPosition(4,22);
+			weapons.members[1].setPosition(4,11);
+			}
+
 			if (weapons.length == 1) {
 				return;
 			}
 			indexOfselectedWeapon = 1;
 		}
-	}
+    }
 }

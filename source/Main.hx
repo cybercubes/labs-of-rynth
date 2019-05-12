@@ -13,7 +13,7 @@ class Main extends Sprite
 		addChild(new FlxGame(320, 240, MenuState));
 
 		var _save:FlxSave = new FlxSave();
-		_save.bind("flixel-tutorial");
+		_save.bind("SettingsSave");
 
 		if (_save.data.volume != null)
 		{

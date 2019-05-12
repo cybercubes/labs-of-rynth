@@ -31,8 +31,12 @@ class PlayState extends FlxState {
 	var gameOverState:GameOverState;
 	var pauseSubStateColor:FlxColor;
 
+	var _hud:InGameHud;
+
 	override public function create():Void {
 		super.create();
+
+		_hud = new InGameHud();
 
 		destroySubStates = false;
 		pauseSubStateColor = 0x99808080;
@@ -54,6 +58,7 @@ class PlayState extends FlxState {
 		_map.loadEntities(placeEntities, "entities");
 
 		add(_mWalls);
+		add(_hud);
 		add(_grpItems);
 
 		for (monster in _monsterS) {

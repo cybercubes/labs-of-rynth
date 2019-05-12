@@ -64,7 +64,7 @@ class OptionsState extends FlxState
 
         // Save
         _save = new FlxSave();
-        _save.bind("flixel-tutorial");
+        _save.bind("SettingsSave");
 
         updateVolume();
 
